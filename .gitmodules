@@ -1,3 +1,3 @@
-[submodule "interface/grpc/protofiles"]
+[submodule "gRPC-proto-files"]
 	path = interface/grpc/protofiles
 	url = git@github.com:devishot/grpc-protofiles.git
