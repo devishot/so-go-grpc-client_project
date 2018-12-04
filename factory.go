@@ -1,0 +1,1 @@
+package so_go_grpc_client_project
