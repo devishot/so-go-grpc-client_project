@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-var IncorrectConnectionArgsError = errors.New("args should not be empty for 'first-after' or 'last-before'")
+var IncorrectConnectionArgsError = errors.New("none of args pairs 'first-after' or 'last-before' exist")
 
 type ProjectService struct {
 	Repo ProjectRepository
