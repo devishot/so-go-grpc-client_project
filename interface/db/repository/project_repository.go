@@ -1,13 +1,13 @@
 package repository
 
 import (
+	"database/sql"
 	"github.com/pkg/errors"
 
 	"github.com/devishot/so-go-grpc-client_project/domain"
+	"github.com/devishot/so-go-grpc-client_project/infrastructure/database"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database/postgres"
 )
-
-const ProjectTableName = "cp_project"
 
 func NewProjectRepository(db *postgres.DB) (*ProjectRepository, error) {
 	r := &ProjectRepository{DB: db}
@@ -32,12 +32,34 @@ func (r *ProjectRepository) createTable() error {
 }
 
 func (r *ProjectRepository) Get(id domain.ID) (p domain.ProjectEntity, err error) {
-	err = r.DB.Conn.QueryRow(ProjectFindByID, id).
+	err = r.DB.Conn.QueryRow(ProjectFindRowByID, id).
 		Scan(&p.ID, &p.ClientID, &p.Timestamp, &p.Title, &p.Description)
 	if err != nil {
-		err = errors.WithMessagef(err, "when: ProjectFindByID | table: %s", ProjectTableName)
-		return
+		if err == sql.ErrNoRows {
+			err = domain.NotFoundProjectRepositoryError
+		} else {
+			err = errors.WithMessagef(err, "when: ProjectFindByID | table: %s", ProjectTableName)
+		}
 	}
 
 	return
+}
+
+func (r *ProjectRepository) Delete(id domain.ID) error {
+	if _, err := r.DB.Conn.Exec(ProjectDeleteRowByID, id); err != nil {
+		return errors.WithMessagef(err, "when: ProjectDeleteByID | table: %s", ProjectTableName)
+	}
+	return nil
+}
+
+func (r *ProjectRepository) Create(entity domain.ProjectEntity) error {
+	values, err := database.GetValuesInOrder(entity, ProjectFields)
+	if err != nil {
+		return err
+	}
+
+	if _, err := r.DB.Conn.Exec(ProjectInsertRow, values); err != nil {
+		return errors.WithMessagef(err, "when: ProjectCreateRow | table: %s", ProjectTableName)
+	}
+	return nil
 }

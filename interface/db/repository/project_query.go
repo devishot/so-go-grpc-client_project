@@ -1,5 +1,8 @@
 package repository
 
+const ProjectTableName = "cp_project"
+const ProjectFields = "id, client_id, created_at, title, description"
+
 const ProjectCreateTable = `
 CREATE TABLE IF NOT EXISTS cp_project (
 	id 			uuid NOT NULL,
@@ -10,12 +13,29 @@ CREATE TABLE IF NOT EXISTS cp_project (
 PRIMARY KEY (id,client_id)
 )`
 
-const ProjectFindByID = `
+const ProjectFindRowByID = `
 SELECT
 	id, client_id, created_at, title, description
 FROM
 	cp_project
 WHERE
 	id = $1
+`
+const ProjectDeleteRowByID = `
+DELETE
+FROM
+	cp_project
+WHERE
+	id = $1
+`
 
+const ProjectInsertRow = `
+INSERT INTO cp_project (
+	id, client_id, created_at, title, description
+)
+VALUES (
+	$1, $2, $3, $4, $5
+)
+RETURNING
+	id, description
 `
