@@ -63,3 +63,29 @@ func (r *ProjectRepository) Create(entity domain.ProjectEntity) error {
 	}
 	return nil
 }
+
+func (r *ProjectRepository) GetByClient(clientID domain.ID) (projects []domain.ProjectEntity, err error) {
+	rows, err := r.DB.Conn.Query(ProjectFindRowsByClientID, clientID)
+	if err != nil {
+		return
+	}
+	defer database.Must(rows.Close())
+
+	for rows.Next() {
+		p := domain.ProjectEntity{}
+
+		err := rows.Scan(&p.ID, &p.ClientID, &p.Timestamp, &p.Title, &p.Description)
+		if err != nil {
+			return
+		}
+
+		projects = append(projects, p)
+	}
+
+	err = rows.Err()
+	if err != nil {
+		return
+	}
+
+	return
+}

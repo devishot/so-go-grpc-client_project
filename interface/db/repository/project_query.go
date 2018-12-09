@@ -20,6 +20,7 @@ FROM
 	cp_project
 WHERE
 	id = $1
+LIMIT 1
 `
 const ProjectDeleteRowByID = `
 DELETE
@@ -38,4 +39,13 @@ VALUES (
 )
 RETURNING
 	id, description
+`
+
+const ProjectFindRowsByClientID = `
+SELECT
+	id, client_id, created_at, title, description
+FROM
+	cp_project
+WHERE
+	client_id = $1
 `
