@@ -1,14 +1,12 @@
 package domain
 
 import (
-	"encoding/base64"
 	"time"
 
 	"github.com/satori/go.uuid"
 )
 
 type ID string
-type ConnCursor string
 
 func generateID() ID {
 	id := uuid.Must(uuid.NewV4())
@@ -50,11 +48,4 @@ type ProjectEntity struct {
 	Title       string
 	Description string
 	ClientID    ID
-}
-
-func (p ProjectEntity) getTimestampCursor() ConnCursor {
-	ts := p.Timestamp.Unix()
-	tsStr := string(ts)
-	cursor := base64.StdEncoding.EncodeToString([]byte(tsStr))
-	return ConnCursor(cursor)
 }

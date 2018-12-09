@@ -11,5 +11,4 @@ type ProjectRepository interface {
 	Delete(id ID) error
 	Create(entity ProjectEntity) error
 	GetByClient(clientID ID) ([]ProjectEntity, error)
-	Connection(clientID ID, args ConnectionArgumentsValue) (*ProjectConnectionPageValue, error)
 }
