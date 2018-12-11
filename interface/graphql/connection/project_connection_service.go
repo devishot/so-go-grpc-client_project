@@ -88,12 +88,12 @@ func (s *ProjectConnectionService) fetchPage(cID domain.ID, args conn.Connection
 func (s *ProjectConnectionService) getEdges(projects []domain.ProjectEntity) []*conn.ConnectionEdgeValue {
 	edges := make([]*conn.ConnectionEdgeValue, len(projects))
 
-	for _, p := range projects {
+	for i, p := range projects {
 		edge := &conn.ConnectionEdgeValue{
 			Cursor: encodeTimestampCursor(p.Timestamp),
 			Node:   p,
 		}
-		edges = append(edges, edge)
+		edges[i] = edge
 	}
 
 	return edges
@@ -102,12 +102,12 @@ func (s *ProjectConnectionService) getEdges(projects []domain.ProjectEntity) []*
 func (s *ProjectConnectionService) getPageInfo(forward bool, page *graphql.ProjectConnectionPageValue, edges []*conn.ConnectionEdgeValue) conn.ConnectionPageInfoValue {
 	if forward {
 		return conn.ConnectionPageInfoValue{
-			HasNextPage: edges[len(edges)-1].Cursor == page.EndCursor,
+			HasNextPage: edges[len(edges)-1].Cursor != page.EndCursor,
 			EndCursor:   page.EndCursor,
 		}
 	} else {
 		return conn.ConnectionPageInfoValue{
-			HasPreviousPage: edges[0].Cursor == page.StartCursor,
+			HasPreviousPage: edges[0].Cursor != page.StartCursor,
 			StartCursor:     page.StartCursor,
 		}
 	}

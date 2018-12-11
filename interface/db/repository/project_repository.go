@@ -75,7 +75,7 @@ func (r *ProjectRepository) GetByClient(clientID domain.ID) (projects []domain.P
 	for rows.Next() {
 		p := domain.ProjectEntity{}
 
-		err := rows.Scan(&p.ID, &p.ClientID, &p.Timestamp, &p.Title, &p.Description)
+		err = rows.Scan(&p.ID, &p.ClientID, &p.Timestamp, &p.Title, &p.Description)
 		if err != nil {
 			return
 		}
