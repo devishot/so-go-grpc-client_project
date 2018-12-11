@@ -22,6 +22,7 @@ WHERE
 	id = $1
 LIMIT 1
 `
+
 const ProjectDeleteRowByID = `
 DELETE
 FROM
@@ -48,4 +49,50 @@ FROM
 	cp_project
 WHERE
 	client_id = $1
+`
+
+const ProjectFindLastRowByClientID = `
+SELECT
+	id, client_id, created_at, title, description
+FROM
+	cp_project
+WHERE
+	client_id = $1
+ORDER BY created_at DESC
+LIMIT 1
+`
+
+const ProjectFindFirstRowByClientID = `
+SELECT
+	id, client_id, created_at, title, description
+FROM
+	cp_project
+WHERE
+	client_id = $1
+ORDER BY created_at ASC
+LIMIT 1
+`
+
+const ProjectFindRowsForForwardPage = `
+SELECT
+	id, client_id, created_at, title, description
+FROM
+	cp_project
+WHERE
+	client_id = $1 AND
+	created_at > $2::timestamptz
+ORDER BY created_at ASC
+LIMIT $3
+`
+
+const ProjectFindRowsForBackwardPage = `
+SELECT
+	id, client_id, created_at, title, description
+FROM
+	cp_project
+WHERE
+	client_id = $1 AND
+	created_at < $2::timestamptz
+ORDER BY created_at DESC
+LIMIT $3
 `

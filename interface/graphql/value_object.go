@@ -27,7 +27,7 @@ type ProjectRepositoryPageArgs struct {
 	Before time.Time
 }
 
-func IsForward(args ProjectRepositoryPageArgs) bool {
+func (args ProjectRepositoryPageArgs) IsForward() bool {
 	if args.First != 0 && !args.After.IsZero() {
 		return true
 	}

@@ -4,7 +4,7 @@ type ProjectService struct {
 	Repo ProjectRepository
 }
 
-func (s *ProjectService) Create(in ProjectInputValue) error {
+func (s *ProjectService) Create(in ProjectEntity) error {
 	p := NewProject(in.ClientID, in.Title, in.Description)
 
 	return s.Repo.Create(p)

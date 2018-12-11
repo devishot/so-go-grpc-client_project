@@ -1,9 +1,6 @@
 package connection
 
 import (
-	"strconv"
-	"time"
-
 	"github.com/devishot/so-go-grpc-client_project/domain"
 	conn "github.com/devishot/so-go-grpc-client_project/infrastructure/graphql_connection"
 	"github.com/devishot/so-go-grpc-client_project/interface/graphql"
@@ -11,24 +8,6 @@ import (
 
 type ProjectConnectionService struct {
 	ConnRepo ProjectConnectionRepository
-}
-
-func (s *ProjectConnectionService) encodeTimestampCursor(t time.Time) conn.Cursor {
-	ts := t.Unix()
-	str := string(ts)
-	return conn.NewCursor(str)
-}
-
-func (s *ProjectConnectionService) decodeTimestampCursor(c conn.Cursor) time.Time {
-	str := conn.Must(conn.FromCursor(c)).(string)
-
-	i, err := strconv.ParseInt(str, 10, 64)
-	if err != nil {
-		panic(err)
-	}
-
-	t := time.Unix(i, 0)
-	return t
 }
 
 func (s *ProjectConnectionService) Connection(cID domain.ID, args conn.ConnectionArgumentsValue) (
@@ -66,25 +45,25 @@ func (s *ProjectConnectionService) fetchPage(cID domain.ID, args conn.Connection
 	if forward {
 		pageArgs = graphql.ProjectRepositoryPageArgs{
 			First: args.First,
-			After: s.decodeTimestampCursor(args.After),
+			After: decodeTimestampCursor(args.After),
 		}
 	} else {
 		pageArgs = graphql.ProjectRepositoryPageArgs{
 			Last:   args.Last,
-			Before: s.decodeTimestampCursor(args.Before),
+			Before: decodeTimestampCursor(args.Before),
 		}
 	}
 
 	if forward {
-		cursorProject, err = s.ConnRepo.GetLastByTimestamp(cID, pageArgs)
+		cursorProject, err = s.ConnRepo.GetLastByClient(cID)
 	} else {
-		cursorProject, err = s.ConnRepo.GetFirstByTimestamp(cID, pageArgs)
+		cursorProject, err = s.ConnRepo.GetFirstByClient(cID)
 	}
 	if err != nil {
 		return
 	}
 
-	cursor := s.encodeTimestampCursor(cursorProject.Timestamp)
+	cursor := encodeTimestampCursor(cursorProject.Timestamp)
 
 	projects, err := s.ConnRepo.PaginateByTimestamp(cID, pageArgs)
 	if err != nil {
@@ -111,7 +90,7 @@ func (s *ProjectConnectionService) getEdges(projects []domain.ProjectEntity) []*
 
 	for _, p := range projects {
 		edge := &conn.ConnectionEdgeValue{
-			Cursor: s.encodeTimestampCursor(p.Timestamp),
+			Cursor: encodeTimestampCursor(p.Timestamp),
 			Node:   p,
 		}
 		edges = append(edges, edge)
@@ -120,10 +99,7 @@ func (s *ProjectConnectionService) getEdges(projects []domain.ProjectEntity) []*
 	return edges
 }
 
-func (s *ProjectConnectionService) getPageInfo(
-	forward bool,
-	page *graphql.ProjectConnectionPageValue,
-	edges []*conn.ConnectionEdgeValue) conn.ConnectionPageInfoValue {
+func (s *ProjectConnectionService) getPageInfo(forward bool, page *graphql.ProjectConnectionPageValue, edges []*conn.ConnectionEdgeValue) conn.ConnectionPageInfoValue {
 	if forward {
 		return conn.ConnectionPageInfoValue{
 			HasNextPage: edges[len(edges)-1].Cursor == page.EndCursor,
