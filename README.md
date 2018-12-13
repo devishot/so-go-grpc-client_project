@@ -33,8 +33,52 @@ Example:
     
     - [Discussion](https://stackoverflow.com/questions/3079885/options-for-eliminating-nullable-columns-from-a-db-model-in-order-to-avoid-sql#)
     
-    - [Paper 1](http://www.u.arizona.edu/~rubinson/scrawl/Rubinson.2007.Nulls_Three-Valued_Logic_and_Ambiguity_in_SQL.pdf)
+    - Book: `O’Relly / C.J. Date: "Database in Depth: Relational Theory for Practitioners”`
     
-    - [Paper 2](https://www.dcs.warwick.ac.uk/~hugh/TTM/Missing-info-without-nulls.pdf)
+    - [Paper 1: Critique for this approach](http://www.u.arizona.edu/~rubinson/scrawl/Rubinson.2007.Nulls_Three-Valued_Logic_and_Ambiguity_in_SQL.pdf)
+    
+    - [Paper 2: How to manage database without NULL value](https://www.dcs.warwick.ac.uk/~hugh/TTM/Missing-info-without-nulls.pdf)
 
 2. 
+
+
+---
+
+### Server configurations
+
+#### Database
+
+Every microservices have own database.
+For dev environment, on local machine, they have single user.
+
+##### Install
+- Postgresql 11 for Macos
+https://postgresapp.com/
+- PgAdmin GUI for postgresql databases. Runs as local web server
+https://www.pgadmin.org/
+
+##### Create database
+
+run in terminal:
+> psql postgres
+
+1. for create database `so_client_project`:
+
+    > postgres=> CREATE DATABASE so_client_project;
+
+2. for grant all access for db user `devishot`, which same as system user:
+
+    > postgres=> GRANT ALL PRIVILEGES ON DATABASE so_client_project TO devishot;
+
+3. for connect into created database:
+
+    > postgres=> \connect so_client_project;
+
+4. for display tables in the database:
+
+    > postgres=> \dt
+
+5. for exit:
+
+    > \q
+
