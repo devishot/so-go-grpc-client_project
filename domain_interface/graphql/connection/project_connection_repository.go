@@ -2,7 +2,7 @@ package connection
 
 import (
 	"github.com/devishot/so-go-grpc-client_project/domain"
-	"github.com/devishot/so-go-grpc-client_project/interface/graphql"
+	"github.com/devishot/so-go-grpc-client_project/domain_interface/graphqll"
 )
 
 //go:generate moq -out project_connection_repository__gen_mock.go . ProjectConnectionRepository

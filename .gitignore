@@ -21,8 +21,8 @@ interface/tests/node_modules/*
 .glide/
 
 # protoc generated code
-interface/api/*.proto
-interface/api/*.pb.go
+domain_interface/api/*.proto
+domain_interface/api/*.pb.go
 
 # moq generated files for go interfaces
 *__gen_mock.go

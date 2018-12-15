@@ -5,9 +5,9 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/devishot/so-go-grpc-client_project/domain"
+	"github.com/devishot/so-go-grpc-client_project/domain_interface/graphqll"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database/postgres"
-	"github.com/devishot/so-go-grpc-client_project/interface/graphql"
 )
 
 func NewProjectRepository(db *postgres.DB) (*ProjectRepository, error) {

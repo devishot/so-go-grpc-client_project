@@ -2,8 +2,8 @@ package connection
 
 import (
 	"github.com/devishot/so-go-grpc-client_project/domain"
+	"github.com/devishot/so-go-grpc-client_project/domain_interface/graphqll"
 	conn "github.com/devishot/so-go-grpc-client_project/infrastructure/graphql_connection"
-	"github.com/devishot/so-go-grpc-client_project/interface/graphql"
 )
 
 type ProjectConnectionService struct {
