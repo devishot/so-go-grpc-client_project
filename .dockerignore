@@ -1,0 +1,9 @@
+# IDE files
+.idea/
+
+# Deploy fiels
+deploy/
+
+# protoc generated code
+domain_interface/api/*.proto
+domain_interface/api/*.pb.go

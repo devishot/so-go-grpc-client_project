@@ -17,7 +17,7 @@ Run command
 
 Example:
 
-> git submodule add --name gRPC-proto-files git@github.com:devishot/grpc-protofiles.git interface/grpc/protofiles
+> git submodule add --name so-gRPC-proto-files git@github.com:devishot/grpc-protofiles.git domain_interface/grpc/protofiles
 
 ---
 
@@ -81,4 +81,53 @@ run in terminal:
 5. for exit:
 
     > \q
+
+
+#### Configurations
+Store configs in env variables. It replaces config files.
+
+- [Idea from "12 Factor App"](https://12factor.net/config)
+
+- [Tutorial about ENV and ARG in docker](https://vsupalov.com/docker-arg-env-variable-guide/)
+
+
+##### Run with env-files
+
+How to execute multiple env-file with `docker run`:
+
+> docker run --env-file=database.env --env-file=app.env alpine env
+
+
+How to define in `docker-compose` file:
+
+```dockerfile
+version: '3'
+
+services:
+  plex:
+    image: alpine
+      env_file: 
+        - ./database.env 
+        - ./app.env
+        - /opt/secrets.env
+```
+
+
+#### Docker
+
+##### Build:
+
+> docker build -t so-client_project --force-rm .
+
+
+`--force-rm` always delete intermediate containers; 
+you can replace it to `--rm` which delete only when build was success.
+
+##### Run:
+> docker run -it -p 8080:8080 so-client_project
+
+##### Debug:
+
+Getting inside a container:
+> docker run -it -p 8080:8080 so-client_project /bin/sh
 
