@@ -17,6 +17,19 @@ func init() {
 }
 
 func main() {
+	//db := connectToDatabase()
+
+	log.Println("Hello world")
+}
+
+func loadDatabaseEnv() {
+	err := envconfig.Process(DBEnvPrefix, &DBConfig)
+	if err != nil {
+		log.Fatalf("cannot load env configs for %s", DBEnvPrefix)
+	}
+}
+
+func connectToDatabase() (db *postgres.DB) {
 	db, err := postgres.New(DBConfig)
 	if err != nil {
 		log.Fatalf("cannot connect to database, config=%v err=%v", DBConfig, err)
@@ -27,12 +40,5 @@ func main() {
 		log.Fatal("cannot ping database connection")
 	}
 
-	log.Println("Hello world")
-}
-
-func loadDatabaseEnv() {
-	err := envconfig.Process(DBEnvPrefix, &DBConfig)
-	if err != nil {
-		log.Fatalf("cannot load env configs for %s", DBEnvPrefix)
-	}
+	return
 }

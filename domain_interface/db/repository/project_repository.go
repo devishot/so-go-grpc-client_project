@@ -5,7 +5,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/devishot/so-go-grpc-client_project/domain"
-	"github.com/devishot/so-go-grpc-client_project/domain_interface/graphqll"
+	"github.com/devishot/so-go-grpc-client_project/domain_interface/graphql"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database/postgres"
 )
@@ -54,7 +54,7 @@ func (r *ProjectRepository) Delete(id domain.ID) error {
 }
 
 func (r *ProjectRepository) Create(entity domain.ProjectEntity) error {
-	values, err := database.GetValuesInOrder(entity, ProjectFields)
+	values, err := database.ExtractValuesFromTaggedStruct(entity, ProjectFields)
 	if err != nil {
 		return err
 	}
