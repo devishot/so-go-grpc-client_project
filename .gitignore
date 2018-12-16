@@ -26,3 +26,7 @@ domain_interface/api/*.pb.go
 
 # moq generated files for go interfaces
 *__gen_mock.go
+
+# docker output files: `go build -o app`
+app
+

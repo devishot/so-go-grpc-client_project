@@ -153,6 +153,12 @@ Getting inside a container:
 
 ##### Second version
 
+There is special go library for watch files and compile go sources:
+ 
+- [github.com/githubnemo/CompileDaemon](github.com/githubnemo/CompileDaemon)
+
+- [Article](https://www.zachjohnsondev.com/posts/go-docker-hot-reload-example/)
+
 ###### Build
 
 > docker build -t so-client_project-dev --rm -f build/dev/Dockerfile .
@@ -160,7 +166,6 @@ Getting inside a container:
 ###### Run:
 
 > docker-compose -f build/dev/docker-compose.yml up
-
 
 ---
 
@@ -197,5 +202,5 @@ This problem relates to Docker on Mac.
 > `host.docker.internal`, which resolves to the internal IP address used by the host. 
 > This is for development purpose and will not work in a production environment outside of Docker for Mac.
 
-[Source](https://docs.docker.com/docker-for-mac/networking/#there-is-no-docker0-bridge-on-macos#i-want-to-connect-from-a-container-to-a-service-on-the-host)
+[Official docs](https://docs.docker.com/docker-for-mac/networking/#there-is-no-docker0-bridge-on-macos#i-want-to-connect-from-a-container-to-a-service-on-the-host)
 
