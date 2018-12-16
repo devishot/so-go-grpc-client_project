@@ -1,11 +1,10 @@
 package postgres
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 
-	// PostgreSQL library which implements database/sql interface
+	"database/sql"
 	_ "github.com/lib/pq"
 )
 
@@ -16,8 +15,7 @@ type DB struct {
 
 func New(cfg Config) (*DB, error) {
 	conn, err := sql.Open("postgres", fmt.Sprintf(
-		"user=%s password=%s dbname=%s host=%s port=%d sslmode=disable",
-		cfg.User, cfg.Password, cfg.Database, cfg.Host, cfg.Port))
+		"postgres://%s:%s@%s:%d/%s?sslmode=disable", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.Database))
 	if err != nil {
 		return nil, err
 	}
