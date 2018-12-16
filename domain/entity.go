@@ -26,10 +26,14 @@ func NewClient(fName, lName, cName string) ClientEntity {
 
 type ClientEntity struct {
 	ID          ID
-	Timestamp   time.Time
-	FirstName   string
-	LastName    string
-	CompanyName string
+	Timestamp   time.Time `db:"created_at"`
+	FirstName   string    `db:"first_name"`
+	LastName    string    `db:"last_name"`
+	CompanyName string    `db:"company_name"`
+}
+
+func (e ClientEntity) IsZero() bool {
+	return (e.ID == "" || e.Timestamp.IsZero())
 }
 
 func NewProject(clientID ID, title, description string) ProjectEntity {
