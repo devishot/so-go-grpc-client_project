@@ -46,6 +46,8 @@ Example:
 
 ### Server configurations
 
+
+
 #### Database
 
 Every microservices have own database.
@@ -83,6 +85,8 @@ run in terminal:
     > \q
 
 
+
+
 #### Configurations
 Store configs in env variables. It replaces config files.
 
@@ -100,7 +104,7 @@ How to execute multiple env-file with `docker run`:
 
 How to define in `docker-compose` file:
 
-```dockerfile
+```
 version: '3'
 
 services:
@@ -112,22 +116,66 @@ services:
         - /opt/secrets.env
 ```
 
+##### Default Environments
+
+is under folder default_env:
+- default_env/database.env
+
+
 
 #### Docker
 
 ##### Build:
 
-> docker build -t so-client_project --force-rm .
+> docker build -t so-client_project --rm .
 
 
 `--force-rm` always delete intermediate containers; 
 you can replace it to `--rm` which delete only when build was success.
 
 ##### Run:
-> docker run -it -p 8080:8080 so-client_project
+> docker run -it -p 8080:8080 --env-file=default_env/database.env so-client_project
 
 ##### Debug:
 
 Getting inside a container:
 > docker run -it -p 8080:8080 so-client_project /bin/sh
+
+
+
+##### Problem / Solutions:
+
+
+
+###### Alpine cannot resolve host for download APKINDEX.
+
+Docker file runs `apk update` for install git, 
+which is required for install some `go get` packages.
+
+
+###### Solution:
+
+run following:
+
+> sudo networksetup -setdnsservers Wi-Fi 8.8.8.8 8.8.4.4 74.82.42.42
+
+why it works:
+
+- [Issue for the problem](https://github.com/gliderlabs/docker-alpine/issues/279)
+- [Official DNS for alpine](https://wiki.alpinelinux.org/wiki/Configure_Networking#Configuring_DNS)
+- [Solution how create /etc/resolv on macOS](https://serverfault.com/a/478540)
+
+
+
+###### Cannot connect to localhost of Docker Host from container
+
+This problem relates to Docker on Mac.
+
+###### Solution
+
+> From 18.03 onwards our recommendation is to connect to the special DNS name 
+> `host.docker.internal`, which resolves to the internal IP address used by the host. 
+> This is for development purpose and will not work in a production environment outside of Docker for Mac.
+
+[Source](https://docs.docker.com/docker-for-mac/networking/#there-is-no-docker0-bridge-on-macos#i-want-to-connect-from-a-container-to-a-service-on-the-host)
 
