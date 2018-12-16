@@ -1,8 +1,8 @@
 # First stage
 FROM golang:1.11-alpine as builder
 
-COPY . /go/src/github.com/devishot/so-go-grpc-client_project/
 WORKDIR /go/src/github.com/devishot/so-go-grpc-client_project
+COPY . .
 
 RUN apk --update add git openssh && \
     rm -rf /var/lib/apt/lists/* && \

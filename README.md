@@ -1,7 +1,7 @@
 # so-go-grpc-client_project
 Provides Client / Project relations
 
-### Interfaces
+### Domain Interfaces
 
 #### gRPC
 
@@ -87,7 +87,7 @@ run in terminal:
 
 
 
-#### Configurations
+#### App Configurations
 Store configs in env variables. It replaces config files.
 
 - [Idea from "12 Factor App"](https://12factor.net/config)
@@ -122,29 +122,49 @@ is under folder default_env:
 - default_env/database.env
 
 
+---
 
 #### Docker
 
-##### Build:
+2 version of build:
 
-> docker build -t so-client_project --rm .
+- build/Dockerfile - use two-step build for optimize output image
+- build/dev/Dockerfile - with hot-reload, executes `go build` every time after code changes
 
 
-`--force-rm` always delete intermediate containers; 
-you can replace it to `--rm` which delete only when build was success.
+##### First version
 
-##### Run:
+###### Build:
+
+> docker build -t so-client_project --rm -f build/Dockerfile .
+
+1. `--force-rm` always delete intermediate containers; 
+you can replace it to `--rm` which delete only when build was success;
+2. `-f` specify Dockerfile independently of the build context (workdir on host).
+
+###### Run:
 > docker run -it -p 8080:8080 --env-file=default_env/database.env so-client_project
 
-##### Debug:
+###### Debug:
 
 Getting inside a container:
 > docker run -it -p 8080:8080 so-client_project /bin/sh
 
 
+##### Second version
+
+###### Build
+
+> docker build -t so-client_project-dev --rm -f build/dev/Dockerfile .
+
+###### Run:
+
+> docker-compose -f build/dev/docker-compose.yml up
+
+
+---
 
 ##### Problem / Solutions:
-
 
 
 ###### Alpine cannot resolve host for download APKINDEX.

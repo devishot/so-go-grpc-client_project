@@ -27,7 +27,7 @@ func main() {
 		log.Fatal("cannot ping database connection")
 	}
 
-	log.Println("Hello worlds")
+	log.Println("Hello world")
 }
 
 func loadDatabaseEnv() {
