@@ -41,7 +41,7 @@ func (r *ProjectTestRows) prepare() {
 	cID := r.getClientID()
 
 	for i := 0; i < 2; i++ {
-		p := domain.NewProject(cID, fmt.Sprintf("test project-%d", i), "test")
+		p := domain.NewProject(cID, fmt.Sprintf("test project-%d", i+1), "test")
 
 		err := r.repo.Create(p)
 		if err != nil {

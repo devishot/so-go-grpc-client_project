@@ -22,7 +22,8 @@ func ExampleClientRepository_Get() {
 
 	_, err := repo.Get(cl.ID)
 	if err != nil {
-		fmt.Print(err)
+		fmt.Printf("error=%v", err)
+		return
 	}
 
 	//Output:
