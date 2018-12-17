@@ -25,7 +25,7 @@ func NewClient(fName, lName, cName string) ClientEntity {
 }
 
 type ClientEntity struct {
-	ID          ID
+	ID          ID        `db:"id"`
 	Timestamp   time.Time `db:"created_at"`
 	FirstName   string    `db:"first_name"`
 	LastName    string    `db:"last_name"`
@@ -47,9 +47,13 @@ func NewProject(clientID ID, title, description string) ProjectEntity {
 }
 
 type ProjectEntity struct {
-	ID          ID
-	Timestamp   time.Time
-	Title       string
-	Description string
-	ClientID    ID
+	ID          ID        `db:"id"`
+	Timestamp   time.Time `db:"created_at"`
+	Title       string    `db:"title"`
+	Description string    `db:"description"`
+	ClientID    ID        `db:"client_id"`
+}
+
+func (e ProjectEntity) IsZero() bool {
+	return (e.ID == "" || e.Timestamp.IsZero())
 }
