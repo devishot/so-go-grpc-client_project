@@ -54,13 +54,13 @@ func (r *ProjectRepository) Delete(id domain.ID) error {
 }
 
 func (r *ProjectRepository) Create(entity domain.ProjectEntity) error {
-	values, err := database.ExtractValuesFromTaggedStruct(entity, ProjectFields)
+	values, err := database.ExtractValuesFromTaggedStruct(entity, ProjectTableColumns)
 	if err != nil {
 		return err
 	}
 
-	if _, err := r.DB.Conn.Exec(ProjectInsertRow, values); err != nil {
-		return errors.WithMessagef(err, "when: ProjectCreateRow | table: %s", ProjectTableName)
+	if _, err := r.DB.Conn.Exec(ProjectInsertRow, values...); err != nil {
+		return errors.WithMessagef(err, "when: ProjectInsertRow | table: %s", ProjectTableName)
 	}
 	return nil
 }
@@ -70,7 +70,7 @@ func (r *ProjectRepository) GetByClient(clientID domain.ID) (projects []domain.P
 	if err != nil {
 		return
 	}
-	defer database.Must(rows.Close())
+	defer database.MustClose(rows)
 
 	for rows.Next() {
 		p := domain.ProjectEntity{}
@@ -91,16 +91,15 @@ func (r *ProjectRepository) GetByClient(clientID domain.ID) (projects []domain.P
 	return
 }
 
-func (r *ProjectRepository) GetLastByClient(cID domain.ID) (
-	p domain.ProjectEntity, err error) {
+func (r *ProjectRepository) GetLastByClient(cID domain.ID) (p domain.ProjectEntity, err error) {
 	err = r.DB.Conn.QueryRow(ProjectFindLastRowByClientID, cID).
 		Scan(&p.ID, &p.ClientID, &p.Timestamp, &p.Title, &p.Description)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			err = domain.NotFoundProjectRepositoryError
-		} else {
-			err = errors.WithMessagef(err, "when: ProjectFindLastRowByClientID | table: %s", ProjectTableName)
-		}
+
+	switch err {
+	case sql.ErrNoRows:
+		err = domain.NotFoundProjectRepositoryError
+	default:
+		err = errors.WithMessagef(err, "when: ProjectFindLastRowByClientID | table: %s", ProjectTableName)
 	}
 
 	return
@@ -134,7 +133,7 @@ func (r *ProjectRepository) PaginateByTimestamp(cID domain.ID, args graphql.Proj
 	if err != nil {
 		return
 	}
-	defer database.Must(rows.Close())
+	defer database.MustClose(rows)
 
 	for rows.Next() {
 		p := domain.ProjectEntity{}
