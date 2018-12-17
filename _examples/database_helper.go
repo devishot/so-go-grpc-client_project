@@ -6,6 +6,8 @@ import (
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database/postgres"
 )
 
+var currentDB *postgres.DB
+
 var dbConfig = postgres.Config{
 	Host:     "localhost",
 	Port:     5432,
@@ -13,11 +15,16 @@ var dbConfig = postgres.Config{
 	Database: "so_client_project",
 }
 
-func getDatabase() (db *postgres.DB) {
+func getDatabase() *postgres.DB {
+	if currentDB != nil {
+		return currentDB
+	}
+
 	db, err := postgres.New(dbConfig)
 	if err != nil {
 		log.Fatalf("cannot connect to database, config=%v error=%v", dbConfig, err)
 	}
 
-	return
+	currentDB = db
+	return currentDB
 }

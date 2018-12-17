@@ -1,28 +1,28 @@
 package _examples
 
 import (
-	"log"
+	"fmt"
 )
 
 func ExampleClientRepository_CreateAndDelete() {
-	testRows := getClientTestRows()
+	t := getClientTestRows()
 
-	testRows.Get()
-	defer testRows.Release()
+	t.Get()
+	defer t.Release()
 
 	//Output:
 }
 
 func ExampleClientRepository_Get() {
-	testRows := getClientTestRows()
-	repo := testRows.repo
+	t := getClientTestRows()
+	repo := t.repo
 
-	cl := testRows.Get()
-	defer testRows.Release()
+	cl := t.Get()
+	defer t.Release()
 
 	_, err := repo.Get(cl.ID)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Print(err)
 	}
 
 	//Output:

@@ -11,29 +11,32 @@ import (
 var clientTestRows *ClientTestRows
 
 type ClientTestRows struct {
-	db     *postgres.DB
-	repo   domain.ClientRepository
-	client domain.ClientEntity
+	db   *postgres.DB
+	repo domain.ClientRepository
+	item domain.ClientEntity
 }
 
 func (r *ClientTestRows) Get() domain.ClientEntity {
-	if !r.client.IsZero() {
-		return r.client
+	if !r.item.IsZero() {
+		return r.item
 	}
+
+	log.Println("inserting ClientEntity row for testing")
 
 	cl := domain.NewClient("testFirstName", "testLastName", "testCompanyName")
+
 	err := r.repo.Create(cl)
 	if err != nil {
-		log.Fatalf("cannot insert row for testing, entity=%v error=%v", cl, err)
+		log.Fatalf("cannot insert row for testing, error=%v entity=%v", err, cl)
 	}
 
-	r.client = cl
-	return r.client
+	r.item = cl
+	return r.item
 }
 
 func (r *ClientTestRows) Release() {
-	if err := r.repo.Delete(r.client.ID); err != nil {
-		log.Fatalf("cannot delete row for testing, entity=%v error=%v", r.client, err)
+	if err := r.repo.Delete(r.item.ID); err != nil {
+		log.Fatalf("cannot delete row for testing, error=%v entity=%v", err, r.item)
 	}
 
 	if err := r.db.Close(); err != nil {
