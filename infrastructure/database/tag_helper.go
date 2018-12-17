@@ -19,7 +19,8 @@ func ExtractValuesFromTaggedStruct(obj interface{}, fields string) (arr []interf
 
 	for _, tag := range tags {
 		valueByTag := m.FieldByName(v, tag)
-		if !valueByTag.IsValid() {
+
+		if !valueByTag.IsValid() || valueByTag.Type() == v.Type() {
 			err = errors.Errorf("cannot find tag=%s in struct (type=%v, value=%v)", tag, v.Type(), v.Interface())
 			err = errors.WithStack(err)
 			return
