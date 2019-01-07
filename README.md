@@ -3,13 +3,23 @@ Provides Client / Project relations
 
 ### Domain Interfaces
 
+
+
 #### gRPC
 
-##### How to install submodule
+Folders structure:
+- api/ - output folder for auto-generated gRPC code
+- grpc-protofiles/ - git-submodule stores all protofiles across apps; It configured in .gitmodules files under root folder;
+- handler/ - implements gRPC handlers, using api structures.
+
+
+##### Git submodule
+
+###### How to install
 1. Check `.gitmodules` file
 2. Just clone a parent project
 
-##### How to add submodules
+###### How to add
 
 Run command
 
@@ -18,6 +28,27 @@ Run command
 Example:
 
 > git submodule add --name so-gRPC-proto-files git@github.com:devishot/grpc-protofiles.git domain_interface/grpc/protofiles
+
+
+
+##### Compile protofiles
+
+###### Install requirements
+
+1. Install for go: `go get google.golang.org/grpc`
+2. Install binary:
+    1. MacOS: `brew install protobuf`
+    2. Linux: [Instruction for download binary](https://grpc.io/docs/quickstart/go.html#install-protocol-buffers-v3)
+3. Install for go: `go get -u github.com/golang/protobuf/protoc-gen-go`
+    1. Add go binary into $PATH: 
+    `export PATH=$PATH:$GOPATH/bin`
+
+
+###### Generate code
+
+> protoc -I=domain_interface/grpc/protofiles -I=${GOPATH}/src --go_out=plugins=grpc:domain_interface/grpc/api/ client.proto client_project.proto
+
+
 
 ---
 
@@ -132,7 +163,7 @@ is under folder default_env:
 - build/dev/Dockerfile - with hot-reload, executes `go build` every time after code changes
 
 
-##### First version
+##### Production Ready Build
 
 ###### Build:
 
@@ -151,7 +182,7 @@ Getting inside a container:
 > docker run -it -p 8080:8080 so-client_project /bin/sh
 
 
-##### Second version
+##### Development Build
 
 There is special go library for watch files and compile go sources:
  
