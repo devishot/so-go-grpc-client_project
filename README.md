@@ -48,8 +48,6 @@ Example:
 
 > protoc -I=domain_interface/grpc/protofiles -I=${GOPATH}/src --go_out=plugins=grpc:domain_interface/grpc/api/ client.proto client_project.proto
 
-
-
 ---
 
 ### Programming Patterns and more
