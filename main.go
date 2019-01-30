@@ -6,39 +6,32 @@ import (
 	"github.com/kelseyhightower/envconfig"
 
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database/postgres"
+	"github.com/devishot/so-go-grpc-client_project/infrastructure/tcp_server"
+	"github.com/devishot/so-go-grpc-client_project/usecase"
 )
 
 const DBEnvPrefix string = "DATABASE"
-
-var DBConfig postgres.Config
-
-func init() {
-	loadDatabaseEnv()
-}
+const GRPCEnvPrefix string = "GRPC"
 
 func main() {
-	//db := connectToDatabase()
+	b := &usecase.Builder{}
+	b.InitGRPC(loadGRPCEnv())
 
-	log.Println("Hello world")
+	b.GRPCServer.Listen()
 }
 
-func loadDatabaseEnv() {
-	err := envconfig.Process(DBEnvPrefix, &DBConfig)
+func loadDatabaseEnv() (cfg postgres.Config) {
+	err := envconfig.Process(DBEnvPrefix, &cfg)
 	if err != nil {
-		log.Fatalf("cannot load env configs for %s", DBEnvPrefix)
+		log.Fatalf("cannot load env configs for %t", DBEnvPrefix)
 	}
+	return
 }
 
-func connectToDatabase() (db *postgres.DB) {
-	db, err := postgres.New(DBConfig)
+func loadGRPCEnv() (cfg tcp_server.Config) {
+	err := envconfig.Process(GRPCEnvPrefix, &cfg)
 	if err != nil {
-		log.Fatalf("cannot connect to database, config=%v err=%v", DBConfig, err)
+		log.Fatalf("cannot load env configs for %t", DBEnvPrefix)
 	}
-
-	err = db.Conn.Ping()
-	if err != nil {
-		log.Fatal("cannot ping database connection")
-	}
-
 	return
 }
