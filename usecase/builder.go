@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"log"
+	"net"
 
 	"github.com/devishot/so-go-grpc-client_project/domain_interface/grpc"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database/postgres"
@@ -10,12 +11,15 @@ import (
 
 type Builder struct {
 	GRPCServer *grpc.Server
+	TCPServer  net.Listener
 	DB         *postgres.DB
 }
 
 func (b *Builder) InitGRPC(cfg tcp_server.Config) {
-	tcpServer := &tcp_server.TCPServer{Cfg: cfg}
-	grpcServer := &grpc.Server{Listener: tcpServer.Listen()}
+	tcp := &tcp_server.TCPServer{Cfg: cfg}
+	b.TCPServer = tcp.Listen()
+
+	grpcServer := &grpc.Server{Listener: b.TCPServer}
 	grpcServer.Init()
 
 	b.GRPCServer = grpcServer
