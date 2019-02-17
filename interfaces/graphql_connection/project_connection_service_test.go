@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/devishot/so-go-grpc-client_project/domain"
-	conn "github.com/devishot/so-go-grpc-client_project/infrastructure/graphql_connection"
 )
 
 func TestProjectConnectionService_Connection(t *testing.T) {
@@ -25,28 +24,28 @@ func TestProjectConnectionService_Connection(t *testing.T) {
 	afterProject := projects[0]
 	lastProject := projects[len(projects)-1]
 
-	pageArgsExp := ProjectRepositoryPageArgs{
+	pageArgsExp := domain.ProjectRepositoryPageArgs{
 		First: 10,
 		After: afterProject.Timestamp,
 	}
-	connArgs := conn.ConnectionArgumentsValue{
+	connArgs := domain.ConnectionArgumentsValue{
 		First: pageArgsExp.First,
-		After: encodeTimestampCursor(pageArgsExp.After),
+		After: domain.EncodeTimestampCursor(pageArgsExp.After),
 	}
-	connValsExp := &conn.ConnectionValue{
-		Edges: []*conn.ConnectionEdgeValue{
+	connValsExp := &domain.ConnectionValue{
+		Edges: []*domain.ConnectionEdgeValue{
 			{
-				Cursor: encodeTimestampCursor(projects[1].Timestamp),
+				Cursor: domain.EncodeTimestampCursor(projects[1].Timestamp),
 				Node:   projects[1],
 			},
 			{
-				Cursor: encodeTimestampCursor(projects[2].Timestamp),
+				Cursor: domain.EncodeTimestampCursor(projects[2].Timestamp),
 				Node:   projects[2],
 			},
 		},
-		PageInfo: conn.ConnectionPageInfoValue{
+		PageInfo: domain.ConnectionPageInfoValue{
 			HasNextPage: false,
-			EndCursor:   encodeTimestampCursor(lastProject.Timestamp),
+			EndCursor:   domain.EncodeTimestampCursor(lastProject.Timestamp),
 		},
 	}
 
@@ -55,7 +54,7 @@ func TestProjectConnectionService_Connection(t *testing.T) {
 			assert.Equal(t, cID, clientID)
 			return lastProject, nil
 		},
-		PaginateByTimestampFunc: func(clientID domain.ID, args ProjectRepositoryPageArgs) (
+		PaginateByTimestampFunc: func(clientID domain.ID, args domain.ProjectRepositoryPageArgs) (
 			entities []domain.ProjectEntity, e error) {
 			assert.Equal(t, cID, clientID)
 			return projects[1:], nil

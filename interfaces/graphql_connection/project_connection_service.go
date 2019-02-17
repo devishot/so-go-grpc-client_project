@@ -2,15 +2,14 @@ package graphql_connection
 
 import (
 	"github.com/devishot/so-go-grpc-client_project/domain"
-	conn "github.com/devishot/so-go-grpc-client_project/infrastructure/graphql_connection"
 )
 
 type ProjectConnectionService struct {
 	ConnRepo ProjectConnectionRepository
 }
 
-func (s *ProjectConnectionService) Connection(cID domain.ID, args conn.ConnectionArgumentsValue) (
-	*conn.ConnectionValue, error) {
+func (s *ProjectConnectionService) Connection(cID domain.ID, args domain.ConnectionArgumentsValue) (
+	*domain.ConnectionValue, error) {
 	page, err := s.fetchPage(cID, args)
 	if err != nil {
 		return nil, err
@@ -24,15 +23,15 @@ func (s *ProjectConnectionService) Connection(cID domain.ID, args conn.Connectio
 	edges := s.getEdges(page.Projects)
 	pageInfo := s.getPageInfo(forward, page, edges)
 
-	val := &conn.ConnectionValue{
+	val := &domain.ConnectionValue{
 		Edges:    edges,
 		PageInfo: pageInfo,
 	}
 	return val, nil
 }
 
-func (s *ProjectConnectionService) fetchPage(cID domain.ID, args conn.ConnectionArgumentsValue) (
-	val *ProjectConnectionPageValue, err error) {
+func (s *ProjectConnectionService) fetchPage(cID domain.ID, args domain.ConnectionArgumentsValue) (
+	val *domain.ConnectionArgumentsValue, err error) {
 	var cursorProject domain.ProjectEntity
 	var pageArgs ProjectRepositoryPageArgs
 
@@ -42,14 +41,14 @@ func (s *ProjectConnectionService) fetchPage(cID domain.ID, args conn.Connection
 	}
 
 	if forward {
-		pageArgs = ProjectRepositoryPageArgs{
+		pageArgs = domain.ConnectionArgumentsValue{
 			First: args.First,
-			After: decodeTimestampCursor(args.After),
+			After: domain.DecodeTimestampCursor(args.After),
 		}
 	} else {
-		pageArgs = ProjectRepositoryPageArgs{
+		pageArgs = domain.ConnectionArgumentsValue{
 			Last:   args.Last,
-			Before: decodeTimestampCursor(args.Before),
+			Before: domain.DecodeTimestampCursor(args.Before),
 		}
 	}
 
@@ -62,7 +61,7 @@ func (s *ProjectConnectionService) fetchPage(cID domain.ID, args conn.Connection
 		return
 	}
 
-	cursor := encodeTimestampCursor(cursorProject.Timestamp)
+	cursor := domain.EncodeTimestampCursor(cursorProject.Timestamp)
 
 	projects, err := s.ConnRepo.PaginateByTimestamp(cID, pageArgs)
 	if err != nil {
@@ -70,12 +69,12 @@ func (s *ProjectConnectionService) fetchPage(cID domain.ID, args conn.Connection
 	}
 
 	if forward {
-		val = &ProjectConnectionPageValue{
+		val = &domain.ConnectionArgumentsValue{
 			Projects:  projects,
 			EndCursor: cursor,
 		}
 	} else {
-		val = &ProjectConnectionPageValue{
+		val = &domain.ConnectionArgumentsValue{
 			Projects:    projects,
 			StartCursor: cursor,
 		}
@@ -84,12 +83,12 @@ func (s *ProjectConnectionService) fetchPage(cID domain.ID, args conn.Connection
 	return
 }
 
-func (s *ProjectConnectionService) getEdges(projects []domain.ProjectEntity) []*conn.ConnectionEdgeValue {
-	edges := make([]*conn.ConnectionEdgeValue, len(projects))
+func (s *ProjectConnectionService) getEdges(projects []domain.ProjectEntity) []*domain.ConnectionEdgeValue {
+	edges := make([]*domain.ConnectionEdgeValue, len(projects))
 
 	for i, p := range projects {
-		edge := &conn.ConnectionEdgeValue{
-			Cursor: encodeTimestampCursor(p.Timestamp),
+		edge := &domain.ConnectionEdgeValue{
+			Cursor: domain.EncodeTimestampCursor(p.Timestamp),
 			Node:   p,
 		}
 		edges[i] = edge
@@ -98,14 +97,14 @@ func (s *ProjectConnectionService) getEdges(projects []domain.ProjectEntity) []*
 	return edges
 }
 
-func (s *ProjectConnectionService) getPageInfo(forward bool, page *ProjectConnectionPageValue, edges []*conn.ConnectionEdgeValue) conn.ConnectionPageInfoValue {
+func (s *ProjectConnectionService) getPageInfo(forward bool, page *domain.ConnectionArgumentsValue, edges []*domain.ConnectionEdgeValue) domain.ConnectionPageInfoValue {
 	if forward {
-		return conn.ConnectionPageInfoValue{
+		return domain.ConnectionPageInfoValue{
 			HasNextPage: edges[len(edges)-1].Cursor != page.EndCursor,
 			EndCursor:   page.EndCursor,
 		}
 	} else {
-		return conn.ConnectionPageInfoValue{
+		return domain.ConnectionPageInfoValue{
 			HasPreviousPage: edges[0].Cursor != page.StartCursor,
 			StartCursor:     page.StartCursor,
 		}

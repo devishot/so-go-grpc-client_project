@@ -8,5 +8,5 @@ import (
 type ProjectConnectionRepository interface {
 	GetLastByClient(clientID domain.ID) (domain.ProjectEntity, error)
 	GetFirstByClient(clientID domain.ID) (domain.ProjectEntity, error)
-	PaginateByTimestamp(clientID domain.ID, args ProjectRepositoryPageArgs) ([]domain.ProjectEntity, error)
+	PaginateByTimestamp(clientID domain.ID, args domain.ConnectionArgumentsValue) ([]domain.ProjectEntity, error)
 }

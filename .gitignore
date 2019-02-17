@@ -21,14 +21,10 @@ interface/tests/node_modules/*
 .glide/
 
 # protoc generated code
-domain_interface/api/*.proto
-domain_interface/api/*.pb.go
+interfaces/grpc/api/*.pb.go
 
 # moq generated files for go interfaces
 *__gen_mock.go
 
 # docker output files: `go build -o app`
 app
-
-# gRPC generated files
-*.pb.go

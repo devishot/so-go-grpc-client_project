@@ -1,4 +1,4 @@
-package graphql_connection
+package domain
 
 type ConnectionArgumentsValue struct {
 	// forward
