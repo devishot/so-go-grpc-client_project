@@ -6,14 +6,14 @@ Provides Client / Project relations
 Implementation dependencies from infrastructure level to entry point:
 
 1. infrastructure/database/PostgreSQL/*
-2. usecase/database_repository/*
+2. interface/database_repository/*
 3. 
     1. domain/*_repository.go
-    2. usecase/graphql_connection/*_repository.go
-4. usecase/grpc/handler/*
-5. usecase/grpc/server.go
+    2. interface/graphql_connection/*_repository.go
+4. interface/grpc/handler/*
+5. interface/grpc/server.go
 6. infrastructure/tcp_server/server.go
-7. usecase/builder.go
+7. infrastructure/builder.go
 8. main.go
 
 

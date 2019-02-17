@@ -5,16 +5,16 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 
+	"github.com/devishot/so-go-grpc-client_project/infrastructure"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database/postgres"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/tcp_server"
-	"github.com/devishot/so-go-grpc-client_project/usecase"
 )
 
 const DBEnvPrefix string = "DATABASE"
 const GRPCEnvPrefix string = "GRPC"
 
 func main() {
-	b := &usecase.Builder{}
+	b := &infrastructure.Builder{}
 	b.InitGRPC(loadGRPCEnv())
 
 	b.GRPCServer.Listen()
