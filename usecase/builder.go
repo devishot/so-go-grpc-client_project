@@ -4,9 +4,9 @@ import (
 	"log"
 	"net"
 
-	"github.com/devishot/so-go-grpc-client_project/domain_interface/grpc"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database/postgres"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/tcp_server"
+	"github.com/devishot/so-go-grpc-client_project/interfaces/grpc"
 )
 
 type Builder struct {

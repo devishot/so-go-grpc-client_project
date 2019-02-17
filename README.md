@@ -1,15 +1,29 @@
 # so-go-grpc-client_project
 Provides Client / Project relations
 
+### Architecture
+
+Implementation dependencies from infrastructure level to entry point:
+
+1. infrastructure/database/PostgreSQL/*
+2. usecase/database_repository/*
+3. 
+    1. domain/*_repository.go
+    2. usecase/graphql_connection/*_repository.go
+4. usecase/grpc/handler/*
+5. usecase/grpc/server.go
+6. infrastructure/tcp_server/server.go
+7. usecase/builder.go
+8. main.go
+
+
 ### Domain Interfaces
-
-
-
 #### gRPC
 
 Folders structure:
 - api/ - output folder for auto-generated gRPC code
-- grpc-protofiles/ - git-submodule stores all protofiles across apps; It configured in .gitmodules files under root folder;
+- grpc-protofiles/ - git-submodule stores all protofiles across apps; 
+                     It configured in .gitmodules files under root folder;
 - handler/ - implements gRPC handlers, using api structures.
 
 
@@ -27,7 +41,7 @@ Run command
 
 Example:
 
-> git submodule add --name so-gRPC-proto-files git@github.com:devishot/grpc-protofiles.git domain_interface/grpc/protofiles
+> git submodule add --name so-gRPC-proto-files git@github.com:devishot/grpc-protofiles.git interfaces/grpc/protofiles
 
 
 
@@ -46,7 +60,7 @@ Example:
 
 ###### Generate code
 
-> protoc -I=domain_interface/grpc/protofiles -I=${GOPATH}/src --go_out=plugins=grpc:domain_interface/grpc/api/ client.proto client_project.proto
+> protoc -I=interfaces/grpc/protofiles -I=${GOPATH}/src --go_out=plugins=grpc:interfaces/grpc/api/ client.proto client_project.proto
 
 ---
 

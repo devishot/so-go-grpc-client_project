@@ -4,8 +4,8 @@ import (
 	"log"
 
 	"github.com/devishot/so-go-grpc-client_project/domain"
-	"github.com/devishot/so-go-grpc-client_project/domain_interface/db/repository"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database/postgres"
+	"github.com/devishot/so-go-grpc-client_project/interfaces/db/repository"
 )
 
 var clientTestRows *ClientTestRows

@@ -6,8 +6,8 @@ import (
 
 	"google.golang.org/grpc"
 
-	pb "github.com/devishot/so-go-grpc-client_project/domain_interface/grpc/api"
-	"github.com/devishot/so-go-grpc-client_project/domain_interface/grpc/handler"
+	pb "github.com/devishot/so-go-grpc-client_project/interfaces/grpc/api"
+	"github.com/devishot/so-go-grpc-client_project/interfaces/grpc/handler"
 )
 
 type Server struct {

@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/devishot/so-go-grpc-client_project/domain"
-	"github.com/devishot/so-go-grpc-client_project/domain_interface/graphql"
 	conn "github.com/devishot/so-go-grpc-client_project/infrastructure/graphql_connection"
+	"github.com/devishot/so-go-grpc-client_project/interfaces/graphql"
 )
 
 func TestProjectConnectionService_Connection(t *testing.T) {

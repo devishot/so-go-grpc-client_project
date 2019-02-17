@@ -5,7 +5,7 @@ import (
 	"github.com/pkg/errors"
 	"log"
 
-	pb "github.com/devishot/so-go-grpc-client_project/domain_interface/grpc/api"
+	pb "github.com/devishot/so-go-grpc-client_project/interfaces/grpc/api"
 )
 
 var NotImplementedError = errors.New("gRPC not implented error")

@@ -6,7 +6,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 
 	"github.com/devishot/so-go-grpc-client_project/domain"
-	"github.com/devishot/so-go-grpc-client_project/domain_interface/graphql"
+	"github.com/devishot/so-go-grpc-client_project/interfaces/graphql"
 )
 
 func ExampleProjectRepository_CreateAndDelete() {
