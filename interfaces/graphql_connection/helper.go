@@ -1,4 +1,4 @@
-package connection
+package graphql_connection
 
 import (
 	"strconv"

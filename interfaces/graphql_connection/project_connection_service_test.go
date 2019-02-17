@@ -1,4 +1,4 @@
-package connection
+package graphql_connection
 
 import (
 	"testing"
@@ -8,7 +8,6 @@ import (
 
 	"github.com/devishot/so-go-grpc-client_project/domain"
 	conn "github.com/devishot/so-go-grpc-client_project/infrastructure/graphql_connection"
-	"github.com/devishot/so-go-grpc-client_project/interfaces/graphql"
 )
 
 func TestProjectConnectionService_Connection(t *testing.T) {
@@ -26,7 +25,7 @@ func TestProjectConnectionService_Connection(t *testing.T) {
 	afterProject := projects[0]
 	lastProject := projects[len(projects)-1]
 
-	pageArgsExp := graphql.ProjectRepositoryPageArgs{
+	pageArgsExp := ProjectRepositoryPageArgs{
 		First: 10,
 		After: afterProject.Timestamp,
 	}
@@ -56,7 +55,7 @@ func TestProjectConnectionService_Connection(t *testing.T) {
 			assert.Equal(t, cID, clientID)
 			return lastProject, nil
 		},
-		PaginateByTimestampFunc: func(clientID domain.ID, args graphql.ProjectRepositoryPageArgs) (
+		PaginateByTimestampFunc: func(clientID domain.ID, args ProjectRepositoryPageArgs) (
 			entities []domain.ProjectEntity, e error) {
 			assert.Equal(t, cID, clientID)
 			return projects[1:], nil

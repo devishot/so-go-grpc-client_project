@@ -6,7 +6,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 
 	"github.com/devishot/so-go-grpc-client_project/domain"
-	"github.com/devishot/so-go-grpc-client_project/interfaces/graphql"
+	"github.com/devishot/so-go-grpc-client_project/interfaces/graphql_connection"
 )
 
 func ExampleProjectRepository_CreateAndDelete() {
@@ -86,7 +86,7 @@ func ExampleProjectRepository_PaginateByTimestamp_Forward() {
 	p := t.Get()
 	defer t.Release()
 
-	connArgs := graphql.ProjectRepositoryPageArgs{
+	connArgs := graphql_connection.ProjectRepositoryPageArgs{
 		First: 10,
 		After: p.Timestamp,
 	}
@@ -115,7 +115,7 @@ func ExampleProjectRepository_PaginateByTimestamp_Backward() {
 	p := t.GetLast()
 	defer t.Release()
 
-	connArgs := graphql.ProjectRepositoryPageArgs{
+	connArgs := graphql_connection.ProjectRepositoryPageArgs{
 		Last:   10,
 		Before: p.Timestamp,
 	}

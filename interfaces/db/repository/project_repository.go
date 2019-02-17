@@ -7,7 +7,7 @@ import (
 	"github.com/devishot/so-go-grpc-client_project/domain"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database/postgres"
-	"github.com/devishot/so-go-grpc-client_project/interfaces/graphql"
+	"github.com/devishot/so-go-grpc-client_project/interfaces/graphql_connection"
 )
 
 func NewProjectRepository(db *postgres.DB) (*ProjectRepository, error) {
@@ -120,7 +120,7 @@ func (r *ProjectRepository) GetFirstByClient(cID domain.ID) (
 	return
 }
 
-func (r *ProjectRepository) PaginateByTimestamp(cID domain.ID, args graphql.ProjectRepositoryPageArgs) (
+func (r *ProjectRepository) PaginateByTimestamp(cID domain.ID, args graphql_connection.ProjectRepositoryPageArgs) (
 	projects []domain.ProjectEntity, err error) {
 	var rows *sql.Rows
 

@@ -1,9 +1,8 @@
-package connection
+package graphql_connection
 
 import (
 	"github.com/devishot/so-go-grpc-client_project/domain"
 	conn "github.com/devishot/so-go-grpc-client_project/infrastructure/graphql_connection"
-	"github.com/devishot/so-go-grpc-client_project/interfaces/graphql"
 )
 
 type ProjectConnectionService struct {
@@ -33,9 +32,9 @@ func (s *ProjectConnectionService) Connection(cID domain.ID, args conn.Connectio
 }
 
 func (s *ProjectConnectionService) fetchPage(cID domain.ID, args conn.ConnectionArgumentsValue) (
-	val *graphql.ProjectConnectionPageValue, err error) {
+	val *ProjectConnectionPageValue, err error) {
 	var cursorProject domain.ProjectEntity
-	var pageArgs graphql.ProjectRepositoryPageArgs
+	var pageArgs ProjectRepositoryPageArgs
 
 	forward, err := args.IsForward()
 	if err != nil {
@@ -43,12 +42,12 @@ func (s *ProjectConnectionService) fetchPage(cID domain.ID, args conn.Connection
 	}
 
 	if forward {
-		pageArgs = graphql.ProjectRepositoryPageArgs{
+		pageArgs = ProjectRepositoryPageArgs{
 			First: args.First,
 			After: decodeTimestampCursor(args.After),
 		}
 	} else {
-		pageArgs = graphql.ProjectRepositoryPageArgs{
+		pageArgs = ProjectRepositoryPageArgs{
 			Last:   args.Last,
 			Before: decodeTimestampCursor(args.Before),
 		}
@@ -71,12 +70,12 @@ func (s *ProjectConnectionService) fetchPage(cID domain.ID, args conn.Connection
 	}
 
 	if forward {
-		val = &graphql.ProjectConnectionPageValue{
+		val = &ProjectConnectionPageValue{
 			Projects:  projects,
 			EndCursor: cursor,
 		}
 	} else {
-		val = &graphql.ProjectConnectionPageValue{
+		val = &ProjectConnectionPageValue{
 			Projects:    projects,
 			StartCursor: cursor,
 		}
@@ -99,7 +98,7 @@ func (s *ProjectConnectionService) getEdges(projects []domain.ProjectEntity) []*
 	return edges
 }
 
-func (s *ProjectConnectionService) getPageInfo(forward bool, page *graphql.ProjectConnectionPageValue, edges []*conn.ConnectionEdgeValue) conn.ConnectionPageInfoValue {
+func (s *ProjectConnectionService) getPageInfo(forward bool, page *ProjectConnectionPageValue, edges []*conn.ConnectionEdgeValue) conn.ConnectionPageInfoValue {
 	if forward {
 		return conn.ConnectionPageInfoValue{
 			HasNextPage: edges[len(edges)-1].Cursor != page.EndCursor,
