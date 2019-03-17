@@ -23,5 +23,5 @@ type ClientEntity struct {
 }
 
 func (e ClientEntity) IsZero() bool {
-	return (e.ID == "" || e.Timestamp.IsZero())
+	return e.ID == "" || e.Timestamp.IsZero()
 }

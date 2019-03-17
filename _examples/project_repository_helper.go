@@ -6,14 +6,14 @@ import (
 
 	"github.com/devishot/so-go-grpc-client_project/domain"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database/postgres"
-	"github.com/devishot/so-go-grpc-client_project/interfaces/db/repository"
+	"github.com/devishot/so-go-grpc-client_project/interfaces/db/repository_impl"
 )
 
 var projectTestRows *ProjectTestRows
 
 type ProjectTestRows struct {
 	db    *postgres.DB
-	repo  *repository.ProjectRepository
+	repo  *repository_impl.ProjectRepository
 	items []domain.ProjectEntity
 
 	clientTR *ClientTestRows
@@ -70,8 +70,8 @@ func (r *ProjectTestRows) Release() {
 	r.clientTR.Release()
 }
 
-func getProjectRepository(db *postgres.DB) (r *repository.ProjectRepository) {
-	r, err := repository.NewProjectRepository(db)
+func getProjectRepository(db *postgres.DB) (r *repository_impl.ProjectRepository) {
+	r, err := repository_impl.NewProjectRepository(db)
 	if err != nil {
 		log.Fatalf("cannot init ProjectRepository, error=%v", err)
 	}

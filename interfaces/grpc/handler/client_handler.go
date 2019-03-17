@@ -2,28 +2,60 @@ package handler
 
 import (
 	"context"
-	"github.com/pkg/errors"
 	"log"
 
+	"github.com/devishot/so-go-grpc-client_project/domain"
+	connServices "github.com/devishot/so-go-grpc-client_project/interfaces/graphql_connection/services"
 	pb "github.com/devishot/so-go-grpc-client_project/interfaces/grpc/api"
 )
 
-var NotImplementedError = errors.New("gRPC not implented error")
-
 type ClientService struct {
+	Service     domain.ClientService
+	ConnBuilder connServices.Builder
 }
 
-func (s *ClientService) CreateClient(ctx context.Context, cl *pb.Client) (*pb.Client, error) {
-	log.Printf("createClient: client=%v", cl)
-	return nil, NotImplementedError
+func (s ClientService) CreateClient(ctx context.Context, req *pb.CreateClientRequest) (*pb.Client, error) {
+	log.Printf("createClient: req=%v", req)
+
+	cl, err := s.Service.Create(decodeProtoClient(req.Data))
+	if err != nil {
+		return nil, err
+	}
+
+	return encodeProtoClient(cl), nil
 }
 
-func (s *ClientService) DeleteClient(ctx context.Context, req *pb.DeleteClientRequest) (*pb.Client, error) {
+func (s ClientService) DeleteClient(ctx context.Context, req *pb.DeleteClientRequest) (*pb.Client, error) {
 	log.Printf("deleteClient: request=%v", req)
-	return nil, NotImplementedError
+
+	cl, err := s.Service.Delete(decodeID(req.Id))
+	if err != nil {
+		return nil, err
+	}
+
+	return encodeProtoClient(cl), nil
 }
 
-func (s *ClientService) GetClient(ctx context.Context, req *pb.GetClientRequest) (*pb.Client, error) {
+func (s ClientService) GetClient(ctx context.Context, req *pb.GetClientRequest) (*pb.Client, error) {
 	log.Printf("getClient: request=%v", req)
-	return nil, NotImplementedError
+
+	cl, err := s.Service.Get(decodeID(req.Id))
+	if err != nil {
+		return nil, err
+	}
+
+	return encodeProtoClient(cl), nil
+}
+
+func (s ClientService) GetClientConnection(ctx context.Context, req *pb.GetClientConnectionRequest) (*pb.ClientConnectionResponse, error) {
+	log.Printf("getClientConnection: request=%v", req)
+
+	connService := s.ConnBuilder.GetClientConnectionService(decodeConnRequest(req.Args))
+
+	conn, err := connService.GetConnection()
+	if err != nil {
+		return nil, err
+	}
+
+	return encodeClientConnResponse(conn), nil
 }

@@ -1,4 +1,4 @@
-package repository
+package query
 
 const ProjectTableName = "cp_project"
 const ProjectTableColumns = "id, client_id, created_at, title, description"

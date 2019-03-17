@@ -5,7 +5,7 @@ import (
 
 	"github.com/devishot/so-go-grpc-client_project/domain"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database/postgres"
-	"github.com/devishot/so-go-grpc-client_project/interfaces/db/repository"
+	"github.com/devishot/so-go-grpc-client_project/interfaces/db/repository_impl"
 )
 
 var clientTestRows *ClientTestRows
@@ -44,8 +44,8 @@ func (r *ClientTestRows) Release() {
 	}
 }
 
-func getClientRepository(db *postgres.DB) (r *repository.ClientRepository) {
-	r, err := repository.NewClientRepository(db)
+func getClientRepository(db *postgres.DB) (r *repository_impl.ClientRepository) {
+	r, err := repository_impl.NewClientRepository(db)
 	if err != nil {
 		log.Fatalf("cannot init ClientRepository, error=%v", err)
 	}

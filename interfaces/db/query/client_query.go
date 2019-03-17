@@ -1,4 +1,4 @@
-package repository
+package query
 
 const ClientTableName = "cp_client"
 const ClientTableColumns = "id, created_at, first_name, last_name, company_name"

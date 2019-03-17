@@ -35,6 +35,6 @@ type ConnectionEdgeValue struct {
 }
 
 type ConnectionValue struct {
-	Edges    []*ConnectionEdgeValue
+	Edges    []ConnectionEdgeValue
 	PageInfo ConnectionPageInfoValue
 }

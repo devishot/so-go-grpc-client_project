@@ -1,13 +1,14 @@
-package repository
+package repository_impl
 
 import (
 	"database/sql"
+
 	"github.com/pkg/errors"
 
 	"github.com/devishot/so-go-grpc-client_project/domain"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database"
 	"github.com/devishot/so-go-grpc-client_project/infrastructure/database/postgres"
-	"github.com/devishot/so-go-grpc-client_project/interfaces/graphql_connection"
+	q "github.com/devishot/so-go-grpc-client_project/interfaces/db/query"
 )
 
 func NewProjectRepository(db *postgres.DB) (*ProjectRepository, error) {
@@ -26,20 +27,20 @@ type ProjectRepository struct {
 }
 
 func (r *ProjectRepository) createTable() error {
-	if _, err := r.DB.Conn.Exec(ProjectCreateTable); err != nil {
-		return errors.WithMessagef(err, "when: ProjectCreateTable | table: %s", ProjectTableName)
+	if _, err := r.DB.Conn.Exec(q.ProjectCreateTable); err != nil {
+		return errors.WithMessagef(err, "when: ProjectCreateTable | table: %s", q.ProjectTableName)
 	}
 	return nil
 }
 
 func (r *ProjectRepository) Get(id domain.ID) (p domain.ProjectEntity, err error) {
-	err = r.DB.Conn.QueryRow(ProjectFindRowByID, id).
+	err = r.DB.Conn.QueryRow(q.ProjectFindRowByID, id).
 		Scan(&p.ID, &p.ClientID, &p.Timestamp, &p.Title, &p.Description)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			err = domain.NotFoundProjectRepositoryError
 		} else {
-			err = errors.WithMessagef(err, "when: ProjectFindByID | table: %s", ProjectTableName)
+			err = errors.WithMessagef(err, "when: ProjectFindByID | table: %s", q.ProjectTableName)
 		}
 	}
 
@@ -47,26 +48,26 @@ func (r *ProjectRepository) Get(id domain.ID) (p domain.ProjectEntity, err error
 }
 
 func (r *ProjectRepository) Delete(id domain.ID) error {
-	if _, err := r.DB.Conn.Exec(ProjectDeleteRowByID, id); err != nil {
-		return errors.WithMessagef(err, "when: ProjectDeleteByID | table: %s", ProjectTableName)
+	if _, err := r.DB.Conn.Exec(q.ProjectDeleteRowByID, id); err != nil {
+		return errors.WithMessagef(err, "when: ProjectDeleteByID | table: %s", q.ProjectTableName)
 	}
 	return nil
 }
 
 func (r *ProjectRepository) Create(entity domain.ProjectEntity) error {
-	values, err := database.ExtractValuesFromTaggedStruct(entity, ProjectTableColumns)
+	values, err := database.ExtractValuesFromTaggedStruct(entity, q.ProjectTableColumns)
 	if err != nil {
 		return err
 	}
 
-	if _, err := r.DB.Conn.Exec(ProjectInsertRow, values...); err != nil {
-		return errors.WithMessagef(err, "when: ProjectInsertRow | table: %s", ProjectTableName)
+	if _, err := r.DB.Conn.Exec(q.ProjectInsertRow, values...); err != nil {
+		return errors.WithMessagef(err, "when: ProjectInsertRow | table: %s", q.ProjectTableName)
 	}
 	return nil
 }
 
 func (r *ProjectRepository) GetByClient(clientID domain.ID) (projects []domain.ProjectEntity, err error) {
-	rows, err := r.DB.Conn.Query(ProjectFindRowsByClientID, clientID)
+	rows, err := r.DB.Conn.Query(q.ProjectFindRowsByClientID, clientID)
 	if err != nil {
 		return
 	}
@@ -92,14 +93,14 @@ func (r *ProjectRepository) GetByClient(clientID domain.ID) (projects []domain.P
 }
 
 func (r *ProjectRepository) GetLastByClient(cID domain.ID) (p domain.ProjectEntity, err error) {
-	err = r.DB.Conn.QueryRow(ProjectFindLastRowByClientID, cID).
+	err = r.DB.Conn.QueryRow(q.ProjectFindLastRowByClientID, cID).
 		Scan(&p.ID, &p.ClientID, &p.Timestamp, &p.Title, &p.Description)
 
 	switch err {
 	case sql.ErrNoRows:
 		err = domain.NotFoundProjectRepositoryError
 	default:
-		err = errors.WithMessagef(err, "when: ProjectFindLastRowByClientID | table: %s", ProjectTableName)
+		err = errors.WithMessagef(err, "when: ProjectFindLastRowByClientID | table: %s", q.ProjectTableName)
 	}
 
 	return
@@ -107,29 +108,33 @@ func (r *ProjectRepository) GetLastByClient(cID domain.ID) (p domain.ProjectEnti
 
 func (r *ProjectRepository) GetFirstByClient(cID domain.ID) (
 	p domain.ProjectEntity, err error) {
-	err = r.DB.Conn.QueryRow(ProjectFindFirstRowByClientID, cID).
+	err = r.DB.Conn.QueryRow(q.ProjectFindFirstRowByClientID, cID).
 		Scan(&p.ID, &p.ClientID, &p.Timestamp, &p.Title, &p.Description)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			err = domain.NotFoundProjectRepositoryError
 		} else {
-			err = errors.WithMessagef(err, "when: ProjectFindFirstRowByClientID | table: %s", ProjectTableName)
+			err = errors.WithMessagef(err, "when: ProjectFindFirstRowByClientID | table: %s", q.ProjectTableName)
 		}
 	}
 
 	return
 }
 
-func (r *ProjectRepository) PaginateByTimestamp(cID domain.ID, args graphql_connection.ProjectRepositoryPageArgs) (
+func (r *ProjectRepository) PaginateByTimestamp(cID domain.ID, args domain.ConnectionArgumentsValue) (
 	projects []domain.ProjectEntity, err error) {
 	var rows *sql.Rows
 
-	if args.IsForward() {
-		rows, err = r.DB.Conn.Query(ProjectFindRowsForForwardPage, cID, args.After, args.First)
-	} else {
-		rows, err = r.DB.Conn.Query(ProjectFindRowsForBackwardPage, cID, args.Before, args.Last)
+	isForward, err := args.IsForward()
+	if err != nil {
+		return
 	}
 
+	if isForward {
+		rows, err = r.DB.Conn.Query(q.ProjectFindRowsForForwardPage, cID, args.After, args.First)
+	} else {
+		rows, err = r.DB.Conn.Query(q.ProjectFindRowsForBackwardPage, cID, args.Before, args.Last)
+	}
 	if err != nil {
 		return
 	}
