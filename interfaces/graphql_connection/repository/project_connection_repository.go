@@ -1,6 +1,8 @@
-package graphql_connection
+package repository
 
 import (
+	"time"
+
 	"github.com/devishot/so-go-grpc-client_project/domain"
 )
 
@@ -8,5 +10,6 @@ import (
 type ProjectConnectionRepository interface {
 	GetLastByClient(clientID domain.ID) (domain.ProjectEntity, error)
 	GetFirstByClient(clientID domain.ID) (domain.ProjectEntity, error)
-	PaginateByTimestamp(clientID domain.ID, args domain.ConnectionArgumentsValue) ([]domain.ProjectEntity, error)
+	PaginateForwardByClientByTimestamp(clientID domain.ID, first int, after time.Time) ([]domain.ProjectEntity, error)
+	PaginateBackwardByClientByTimestamp(clientID domain.ID, last int, before time.Time) ([]domain.ProjectEntity, error)
 }

@@ -1,9 +1,9 @@
 package services
 
 import (
-	"github.com/devishot/so-go-grpc-client_project/domain"
+	conn "github.com/devishot/so-go-grpc-client_project/interfaces/graphql_connection/domain"
 )
 
 type ConnectionService interface {
-	GetConnection() (val domain.ConnectionValue, err error)
+	GetPage() (val conn.PageValue, err error)
 }

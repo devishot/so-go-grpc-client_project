@@ -2,6 +2,8 @@ package repository_impl
 
 import (
 	"database/sql"
+	"time"
+
 	"github.com/pkg/errors"
 
 	"github.com/devishot/so-go-grpc-client_project/domain"
@@ -64,4 +66,80 @@ func (r *ClientRepository) Create(entity domain.ClientEntity) error {
 		return errors.WithMessagef(err, "when: ClientInsertRow | table: %s", q.ClientTableName)
 	}
 	return nil
+}
+
+func (r *ClientRepository) GetLast() (cl domain.ClientEntity, err error) {
+	err = r.DB.Conn.QueryRow(q.ClientGetLastRowByCreatedAt).
+		Scan(&cl.ID, &cl.Timestamp, &cl.FirstName, &cl.LastName, &cl.CompanyName)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = domain.NotFoundProjectRepositoryError
+		} else {
+			err = errors.WithMessagef(err, "when: ClientGetLastRowByCreatedAt | table: %s", q.ClientTableName)
+		}
+	}
+
+	return
+}
+
+func (r *ClientRepository) GetFirst() (cl domain.ClientEntity, err error) {
+	err = r.DB.Conn.QueryRow(q.ClientGetFirstRowByCreatedAt).
+		Scan(&cl.ID, &cl.Timestamp, &cl.FirstName, &cl.LastName, &cl.CompanyName)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = domain.NotFoundProjectRepositoryError
+		} else {
+			err = errors.WithMessagef(err, "when: ClientGetFirstRowByCreatedAt | table: %s", q.ClientTableName)
+		}
+	}
+
+	return
+}
+
+func (r *ClientRepository) PaginateForwardByTimestamp(first int, after time.Time) (clients []domain.ClientEntity, err error) {
+	rows, err := r.DB.Conn.Query(q.ClientGetForwardPageByCreatedAt, after, first)
+	if err != nil {
+		return
+	}
+
+	defer database.MustClose(rows)
+
+	for rows.Next() {
+		cl := domain.ClientEntity{}
+
+		err = rows.Scan(&cl.ID, &cl.Timestamp, &cl.FirstName, &cl.LastName, &cl.CompanyName)
+		if err != nil {
+			return
+		}
+
+		clients = append(clients, cl)
+	}
+
+	err = rows.Err()
+	return
+}
+
+func (r *ClientRepository) PaginateBackwardByTimestamp(last int, before time.Time) (clients []domain.ClientEntity, err error) {
+	rows, err := r.DB.Conn.Query(q.ClientGetBackwardPageByCreatedAt, before, last)
+	if err != nil {
+		return
+	}
+
+	defer database.MustClose(rows)
+
+	for rows.Next() {
+		cl := domain.ClientEntity{}
+
+		err = rows.Scan(&cl.ID, &cl.Timestamp, &cl.FirstName, &cl.LastName, &cl.CompanyName)
+		if err != nil {
+			return
+		}
+
+		clients = append(clients, cl)
+	}
+
+	err = rows.Err()
+	return
 }

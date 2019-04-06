@@ -6,14 +6,15 @@ import (
 	"github.com/devishot/so-go-grpc-client_project/interfaces/graphql_connection/repository"
 )
 
-type ClientForwardConnectionService struct {
-	ConnRepo repository.ClientConnectionRepository
+type ProjectForwardConnectionService struct {
+	ConnRepo repository.ProjectConnectionRepository
 	Page     conn.ArgumentsValue
+	Client   domain.ClientEntity
 
-	clients []domain.ClientEntity
+	projects []domain.ProjectEntity
 }
 
-func (s *ClientForwardConnectionService) GetPage() (val conn.PageValue, err error) {
+func (s *ProjectForwardConnectionService) GetPage() (val conn.PageValue, err error) {
 	err = s.fetchPage()
 	if err != nil {
 		return
@@ -31,8 +32,8 @@ func (s *ClientForwardConnectionService) GetPage() (val conn.PageValue, err erro
 	return
 }
 
-func (s *ClientForwardConnectionService) fetchPage() (err error) {
-	s.clients, err = s.ConnRepo.PaginateForwardByTimestamp(s.Page.First, conn.DecodeTimestampCursor(s.Page.After))
+func (s *ProjectForwardConnectionService) fetchPage() (err error) {
+	s.projects, err = s.ConnRepo.PaginateForwardByClientByTimestamp(s.Client.ID, s.Page.First, conn.DecodeTimestampCursor(s.Page.After))
 	if err != nil {
 		return
 	}
@@ -40,10 +41,10 @@ func (s *ClientForwardConnectionService) fetchPage() (err error) {
 	return
 }
 
-func (s *ClientForwardConnectionService) getEdges() []conn.EdgeValue {
+func (s *ProjectForwardConnectionService) getEdges() []conn.EdgeValue {
 	edges := make([]conn.EdgeValue, 0)
 
-	for _, p := range s.clients {
+	for _, p := range s.projects {
 		e := conn.EdgeValue{
 			Cursor: conn.EncodeTimestampCursor(p.Timestamp),
 			Node:   p,
@@ -54,15 +55,15 @@ func (s *ClientForwardConnectionService) getEdges() []conn.EdgeValue {
 	return edges
 }
 
-func (s *ClientForwardConnectionService) getPageInfo() (pageInfo conn.PageInfoValue, err error) {
-	last, err := s.ConnRepo.GetLast()
+func (s *ProjectForwardConnectionService) getPageInfo() (pageInfo conn.PageInfoValue, err error) {
+	last, err := s.ConnRepo.GetLastByClient(s.Client.ID)
 	if err != nil {
 		return
 	}
 
 	var hasNext bool
-	if n := len(s.clients); n > 0 {
-		lastInPage := s.clients[n-1]
+	if n := len(s.projects); n > 0 {
+		lastInPage := s.projects[n-1]
 		hasNext = lastInPage.ID != last.ID
 	}
 

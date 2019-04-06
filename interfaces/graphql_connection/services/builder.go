@@ -1,7 +1,7 @@
 package services
 
 import (
-	"github.com/devishot/so-go-grpc-client_project/domain"
+	conn "github.com/devishot/so-go-grpc-client_project/interfaces/graphql_connection/domain"
 	"github.com/devishot/so-go-grpc-client_project/interfaces/graphql_connection/repository"
 )
 
@@ -9,7 +9,7 @@ type Builder struct {
 	ClientConnRepo repository.ClientConnectionRepository
 }
 
-func (b Builder) GetClientConnectionService(page domain.ConnectionArgumentsValue) ConnectionService {
+func (b Builder) GetClientConnectionService(page conn.ArgumentsValue) ConnectionService {
 	ok, _ := page.IsForward()
 
 	if ok {

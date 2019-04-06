@@ -52,10 +52,10 @@ func (s ClientService) GetClientConnection(ctx context.Context, req *pb.GetClien
 
 	connService := s.ConnBuilder.GetClientConnectionService(decodeConnRequest(req.Args))
 
-	conn, err := connService.GetConnection()
+	page, err := connService.GetPage()
 	if err != nil {
 		return nil, err
 	}
 
-	return encodeClientConnResponse(conn), nil
+	return encodeClientConnResponse(page), nil
 }

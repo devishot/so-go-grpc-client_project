@@ -2,6 +2,7 @@ package repository_impl
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/pkg/errors"
 
@@ -121,23 +122,15 @@ func (r *ProjectRepository) GetFirstByClient(cID domain.ID) (
 	return
 }
 
-func (r *ProjectRepository) PaginateByTimestamp(cID domain.ID, args domain.ConnectionArgumentsValue) (
+func (r *ProjectRepository) PaginateForwardByClientByTimestamp(cID domain.ID, first int, after time.Time) (
 	projects []domain.ProjectEntity, err error) {
 	var rows *sql.Rows
 
-	isForward, err := args.IsForward()
+	rows, err = r.DB.Conn.Query(q.ProjectFindRowsForForwardPage, cID, after, first)
 	if err != nil {
 		return
 	}
 
-	if isForward {
-		rows, err = r.DB.Conn.Query(q.ProjectFindRowsForForwardPage, cID, args.After, args.First)
-	} else {
-		rows, err = r.DB.Conn.Query(q.ProjectFindRowsForBackwardPage, cID, args.Before, args.Last)
-	}
-	if err != nil {
-		return
-	}
 	defer database.MustClose(rows)
 
 	for rows.Next() {
@@ -152,9 +145,31 @@ func (r *ProjectRepository) PaginateByTimestamp(cID domain.ID, args domain.Conne
 	}
 
 	err = rows.Err()
+	return
+}
+
+func (r *ProjectRepository) PaginateBackwardByClientByTimestamp(clientID domain.ID, last int, before time.Time) (
+	projects []domain.ProjectEntity, err error) {
+	var rows *sql.Rows
+
+	rows, err = r.DB.Conn.Query(q.ProjectFindRowsForBackwardPage, clientID, before, last)
 	if err != nil {
 		return
 	}
 
+	defer database.MustClose(rows)
+
+	for rows.Next() {
+		p := domain.ProjectEntity{}
+
+		err = rows.Scan(&p.ID, &p.ClientID, &p.Timestamp, &p.Title, &p.Description)
+		if err != nil {
+			return
+		}
+
+		projects = append(projects, p)
+	}
+
+	err = rows.Err()
 	return
 }

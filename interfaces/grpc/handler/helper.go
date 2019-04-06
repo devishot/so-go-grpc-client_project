@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/devishot/so-go-grpc-client_project/domain"
+	conn "github.com/devishot/so-go-grpc-client_project/interfaces/graphql_connection/domain"
 	pb "github.com/devishot/so-go-grpc-client_project/interfaces/grpc/api"
 )
 
@@ -43,7 +44,7 @@ func encodeCursor(c domain.Cursor) string {
 	return string(c)
 }
 
-func encodeClientConnResponse(value domain.ConnectionValue) *pb.ClientConnectionResponse {
+func encodeClientConnResponse(value conn.PageValue) *pb.ClientConnectionResponse {
 	edges := make([]*pb.ClientConnectionEdge, 0)
 	for _, val := range value.Edges {
 		cl, _ := val.Node.(domain.ClientEntity)
@@ -60,7 +61,7 @@ func encodeClientConnResponse(value domain.ConnectionValue) *pb.ClientConnection
 	}
 }
 
-func encodePageInfo(value domain.ConnectionPageInfoValue) *pb.PageInfo {
+func encodePageInfo(value conn.PageInfoValue) *pb.PageInfo {
 	return &pb.PageInfo{
 		HasNextPage:     value.HasNextPage,
 		StartCursor:     encodeCursor(value.StartCursor),
@@ -69,15 +70,15 @@ func encodePageInfo(value domain.ConnectionPageInfoValue) *pb.PageInfo {
 	}
 }
 
-func decodeConnRequest(args *pb.ConnArgs) domain.ConnectionArgumentsValue {
+func decodeConnRequest(args *pb.ConnArgs) conn.ArgumentsValue {
 	switch args.PerPage.(type) {
 	case *pb.ConnArgs_First:
-		return domain.ConnectionArgumentsValue{
+		return conn.ArgumentsValue{
 			First: int(args.GetFirst()),
 			After: domain.Cursor(args.GetAfter()),
 		}
 	case *pb.ConnArgs_Last:
-		return domain.ConnectionArgumentsValue{
+		return conn.ArgumentsValue{
 			Last:   int(args.GetLast()),
 			Before: domain.Cursor(args.GetBefore()),
 		}

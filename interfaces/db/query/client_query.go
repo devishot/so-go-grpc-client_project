@@ -40,3 +40,43 @@ VALUES (
 RETURNING
 	id, created_at, first_name, last_name, company_name
 `
+
+const ClientGetFirstRowByCreatedAt = `
+SELECT
+	id, created_at, first_name, last_name, company_name
+FROM
+	cp_client
+ORDER BY created_at ASC
+LIMIT 1
+`
+
+const ClientGetLastRowByCreatedAt = `
+SELECT
+	id, created_at, first_name, last_name, company_name
+FROM
+	cp_client
+ORDER BY created_at DESC
+LIMIT 1
+`
+
+const ClientGetForwardPageByCreatedAt = `
+SELECT
+	id, created_at, first_name, last_name, company_name
+FROM
+	cp_client
+WHERE
+	created_at > $1::timestamptz
+ORDER BY created_at ASC
+LIMIT $2
+`
+
+const ClientGetBackwardPageByCreatedAt = `
+SELECT
+	id, created_at, first_name, last_name, company_name
+FROM
+	cp_client
+WHERE
+	created_at < $1::timestamptz
+ORDER BY created_at DESC
+LIMIT $2
+`

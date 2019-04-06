@@ -6,7 +6,6 @@ import (
 	"github.com/google/go-cmp/cmp"
 
 	"github.com/devishot/so-go-grpc-client_project/domain"
-	"github.com/devishot/so-go-grpc-client_project/interfaces/graphql_connection"
 )
 
 func ExampleProjectRepository_CreateAndDelete() {
@@ -86,12 +85,9 @@ func ExampleProjectRepository_PaginateByTimestamp_Forward() {
 	p := t.Get()
 	defer t.Release()
 
-	connArgs := graphql_connection.ProjectRepositoryPageArgs{
-		First: 10,
-		After: p.Timestamp,
-	}
+	first, after := 10, p.Timestamp
 
-	arr, err := repo.PaginateByTimestamp(p.ClientID, connArgs)
+	arr, err := repo.PaginateForwardByClientByTimestamp(p.ClientID, first, after)
 	if err != nil {
 		fmt.Printf("error=%v", err)
 		return
@@ -115,12 +111,9 @@ func ExampleProjectRepository_PaginateByTimestamp_Backward() {
 	p := t.GetLast()
 	defer t.Release()
 
-	connArgs := graphql_connection.ProjectRepositoryPageArgs{
-		Last:   10,
-		Before: p.Timestamp,
-	}
+	last, before := 10, p.Timestamp
 
-	arr, err := repo.PaginateByTimestamp(p.ClientID, connArgs)
+	arr, err := repo.PaginateBackwardByClientByTimestamp(p.ClientID, last, before)
 	if err != nil {
 		fmt.Printf("error=%v", err)
 		return
