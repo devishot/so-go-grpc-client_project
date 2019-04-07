@@ -57,7 +57,7 @@ func (r *ProjectTestRows) getClientID() domain.ID {
 		r.clientTR = getClientTestRows()
 	}
 
-	return r.clientTR.Get().ID
+	return r.clientTR.Get(1)[0].ID
 }
 
 func (r *ProjectTestRows) Release() {

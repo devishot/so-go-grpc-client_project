@@ -79,7 +79,7 @@ func ExampleProjectRepository_GetLastByClient() {
 	//Output:
 }
 
-func ExampleProjectRepository_PaginateByTimestamp_Forward() {
+func ExampleProjectRepository_PaginateForwardByClientByTimestamp() {
 	t := getProjectTestRows()
 	repo := t.repo
 	p := t.Get()
@@ -105,7 +105,7 @@ func ExampleProjectRepository_PaginateByTimestamp_Forward() {
 	// Output:
 }
 
-func ExampleProjectRepository_PaginateByTimestamp_Backward() {
+func ExampleProjectRepository_PaginateBackwardByClientByTimestamp() {
 	t := getProjectTestRows()
 	repo := t.repo
 	p := t.GetLast()

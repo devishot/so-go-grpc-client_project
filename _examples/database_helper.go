@@ -11,7 +11,8 @@ var currentDB *postgres.DB
 var dbConfig = postgres.Config{
 	Host:     "localhost",
 	Port:     5432,
-	User:     "devishot",
+	User:     "smartoffice",
+	Password: "P7Njpy",
 	Database: "so_client_project",
 }
 
