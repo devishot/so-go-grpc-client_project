@@ -15,13 +15,13 @@ func (s ClientService) Create(data ClientEntity) (cl ClientEntity, err error) {
 	return
 }
 
-func (s ClientService) Delete(clientID ID) (cl ClientEntity, err error) {
-	cl, err = s.Repo.Get(clientID)
+func (s ClientService) Delete(id ID) (cl ClientEntity, err error) {
+	cl, err = s.Repo.Get(id)
 	if err != nil {
 		return
 	}
 
-	err = s.Repo.Delete(clientID)
+	err = s.Repo.Delete(id)
 	if err != nil {
 		return
 	}
@@ -29,8 +29,8 @@ func (s ClientService) Delete(clientID ID) (cl ClientEntity, err error) {
 	return
 }
 
-func (s ClientService) Get(clientID ID) (cl ClientEntity, err error) {
-	cl, err = s.Repo.Get(clientID)
+func (s ClientService) Get(id ID) (cl ClientEntity, err error) {
+	cl, err = s.Repo.Get(id)
 	if err != nil {
 		return
 	}

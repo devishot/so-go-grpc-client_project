@@ -12,29 +12,29 @@ import (
 	q "github.com/devishot/so-go-grpc-client_project/interfaces/db/query"
 )
 
-func NewProjectRepository(db *postgres.DB) (*ProjectRepository, error) {
-	r := &ProjectRepository{DB: db}
+func NewProjectRepository(db *postgres.DB) (repo ProjectRepository, err error) {
+	repo = ProjectRepository{DB: db}
 
-	err := r.createTable()
+	err = repo.createTable()
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	return r, nil
+	return
 }
 
 type ProjectRepository struct {
 	DB *postgres.DB
 }
 
-func (r *ProjectRepository) createTable() error {
+func (r ProjectRepository) createTable() error {
 	if _, err := r.DB.Conn.Exec(q.ProjectCreateTable); err != nil {
 		return errors.WithMessagef(err, "when: ProjectCreateTable | table: %s", q.ProjectTableName)
 	}
 	return nil
 }
 
-func (r *ProjectRepository) Get(id domain.ID) (p domain.ProjectEntity, err error) {
+func (r ProjectRepository) Get(id domain.ID) (p domain.ProjectEntity, err error) {
 	err = r.DB.Conn.QueryRow(q.ProjectFindRowByID, id).
 		Scan(&p.ID, &p.ClientID, &p.Timestamp, &p.Title, &p.Description)
 	if err != nil {
@@ -48,14 +48,14 @@ func (r *ProjectRepository) Get(id domain.ID) (p domain.ProjectEntity, err error
 	return
 }
 
-func (r *ProjectRepository) Delete(id domain.ID) error {
+func (r ProjectRepository) Delete(id domain.ID) error {
 	if _, err := r.DB.Conn.Exec(q.ProjectDeleteRowByID, id); err != nil {
 		return errors.WithMessagef(err, "when: ProjectDeleteByID | table: %s", q.ProjectTableName)
 	}
 	return nil
 }
 
-func (r *ProjectRepository) Create(entity domain.ProjectEntity) error {
+func (r ProjectRepository) Create(entity domain.ProjectEntity) error {
 	values, err := database.ExtractValuesFromTaggedStruct(entity, q.ProjectTableColumns)
 	if err != nil {
 		return err
@@ -67,7 +67,7 @@ func (r *ProjectRepository) Create(entity domain.ProjectEntity) error {
 	return nil
 }
 
-func (r *ProjectRepository) GetByClient(clientID domain.ID) (projects []domain.ProjectEntity, err error) {
+func (r ProjectRepository) GetByClient(clientID domain.ID) (projects []domain.ProjectEntity, err error) {
 	rows, err := r.DB.Conn.Query(q.ProjectFindRowsByClientID, clientID)
 	if err != nil {
 		return
@@ -93,7 +93,7 @@ func (r *ProjectRepository) GetByClient(clientID domain.ID) (projects []domain.P
 	return
 }
 
-func (r *ProjectRepository) GetLastByClient(cID domain.ID) (p domain.ProjectEntity, err error) {
+func (r ProjectRepository) GetLastByClient(cID domain.ID) (p domain.ProjectEntity, err error) {
 	err = r.DB.Conn.QueryRow(q.ProjectFindLastRowByClientID, cID).
 		Scan(&p.ID, &p.ClientID, &p.Timestamp, &p.Title, &p.Description)
 
@@ -107,7 +107,7 @@ func (r *ProjectRepository) GetLastByClient(cID domain.ID) (p domain.ProjectEnti
 	return
 }
 
-func (r *ProjectRepository) GetFirstByClient(cID domain.ID) (
+func (r ProjectRepository) GetFirstByClient(cID domain.ID) (
 	p domain.ProjectEntity, err error) {
 	err = r.DB.Conn.QueryRow(q.ProjectFindFirstRowByClientID, cID).
 		Scan(&p.ID, &p.ClientID, &p.Timestamp, &p.Title, &p.Description)
@@ -122,7 +122,7 @@ func (r *ProjectRepository) GetFirstByClient(cID domain.ID) (
 	return
 }
 
-func (r *ProjectRepository) PaginateForwardByClientByTimestamp(cID domain.ID, first int, after time.Time) (
+func (r ProjectRepository) PaginateForwardByClientByTimestamp(cID domain.ID, first int, after time.Time) (
 	projects []domain.ProjectEntity, err error) {
 	var rows *sql.Rows
 
@@ -148,7 +148,7 @@ func (r *ProjectRepository) PaginateForwardByClientByTimestamp(cID domain.ID, fi
 	return
 }
 
-func (r *ProjectRepository) PaginateBackwardByClientByTimestamp(clientID domain.ID, last int, before time.Time) (
+func (r ProjectRepository) PaginateBackwardByClientByTimestamp(clientID domain.ID, last int, before time.Time) (
 	projects []domain.ProjectEntity, err error) {
 	var rows *sql.Rows
 
