@@ -1,24 +1,28 @@
 package grpc
 
 import (
+	"context"
 	"log"
 	"net"
 
 	"google.golang.org/grpc"
 
 	pb "github.com/devishot/so-go-grpc-client_project/interfaces/grpc/api"
-	"github.com/devishot/so-go-grpc-client_project/interfaces/grpc/handler"
 )
 
 type Server struct {
-	Listener   net.Listener
+	Listener             net.Listener
+	ClientHandler        pb.ClientServiceServer
+	ClientProjectHandler pb.ClientProjectServiceServer
+
 	gRPCServer *grpc.Server
 }
 
 func (s *Server) Init() {
 	s.gRPCServer = grpc.NewServer()
 
-	pb.RegisterClientServiceServer(s.gRPCServer, &handler.ClientService{})
+	pb.RegisterClientServiceServer(s.gRPCServer, s.ClientHandler)
+	pb.RegisterClientProjectServiceServer(s.gRPCServer, s.ClientProjectHandler)
 }
 
 func (s *Server) Listen() {
@@ -26,4 +30,9 @@ func (s *Server) Listen() {
 		log.Fatalf("grpc Serve: error=%v", err)
 		return
 	}
+}
+
+func (s *Server) Shutdown(ctx context.Context) {
+	<-ctx.Done()
+	s.gRPCServer.Stop()
 }
