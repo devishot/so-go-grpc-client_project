@@ -7,3 +7,7 @@ type Config struct {
 	Password string
 	Database string
 }
+
+func (cfg Config) IsZero() bool {
+	return cfg.Port == 0
+}
