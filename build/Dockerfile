@@ -20,4 +20,4 @@ COPY --from=builder /go/src/github.com/devishot/so-go-grpc-client_project/app .
 
 CMD ["./app"]
 
-EXPOSE 8080
+EXPOSE 9001
