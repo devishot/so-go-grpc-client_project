@@ -51,7 +51,7 @@ WHERE
 	client_id = $1
 `
 
-const ProjectFindLastRowByClientID = `
+const ProjectFindLastRowForClientByCreatedAt = `
 SELECT
 	id, client_id, created_at, title, description
 FROM
@@ -62,7 +62,7 @@ ORDER BY created_at DESC
 LIMIT 1
 `
 
-const ProjectFindFirstRowByClientID = `
+const ProjectFindFirstRowForClientByCreatedAt = `
 SELECT
 	id, client_id, created_at, title, description
 FROM
@@ -73,7 +73,18 @@ ORDER BY created_at ASC
 LIMIT 1
 `
 
-const ProjectFindRowsForForwardPage = `
+const ProjectFindFirstRowsForClientByCreatedAt = `
+SELECT
+	id, client_id, created_at, title, description
+FROM
+	cp_project
+WHERE
+	client_id = $1 AND
+ORDER BY created_at ASC
+LIMIT $2
+`
+
+const ProjectFindFirstAfterRowsForClientByCreatedAt = `
 SELECT
 	id, client_id, created_at, title, description
 FROM
@@ -85,7 +96,18 @@ ORDER BY created_at ASC
 LIMIT $3
 `
 
-const ProjectFindRowsForBackwardPage = `
+const ProjectFindLastRowsForClientByCreatedAt = `
+SELECT
+	id, client_id, created_at, title, description
+FROM
+	cp_project
+WHERE
+	client_id = $1 AND
+ORDER BY created_at DESC
+LIMIT $2
+`
+
+const ProjectFindLastBeforeRowsForClientByCreatedAt = `
 SELECT
 	id, client_id, created_at, title, description
 FROM

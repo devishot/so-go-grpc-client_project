@@ -99,11 +99,16 @@ func (r ClientRepository) GetFirst() (cl domain.ClientEntity, err error) {
 }
 
 func (r ClientRepository) PaginateForwardByTimestamp(first int, after time.Time) (clients []domain.ClientEntity, err error) {
-	rows, err := r.DB.Conn.Query(q.ClientGetForwardPageByCreatedAt, after, first)
+	var rows *sql.Rows
+
+	if after.IsZero() {
+		rows, err = r.DB.Conn.Query(q.ClientGetFirstRowsByCreatedAt, first)
+	} else {
+		rows, err = r.DB.Conn.Query(q.ClientGetFirstAfterRowsByCreatedAt, after, first)
+	}
 	if err != nil {
 		return
 	}
-
 	defer database.MustClose(rows)
 
 	for rows.Next() {
@@ -122,11 +127,16 @@ func (r ClientRepository) PaginateForwardByTimestamp(first int, after time.Time)
 }
 
 func (r ClientRepository) PaginateBackwardByTimestamp(last int, before time.Time) (clients []domain.ClientEntity, err error) {
-	rows, err := r.DB.Conn.Query(q.ClientGetBackwardPageByCreatedAt, before, last)
+	var rows *sql.Rows
+
+	if before.IsZero() {
+		rows, err = r.DB.Conn.Query(q.ClientGetLastRowsByCreatedAt, last)
+	} else {
+		rows, err = r.DB.Conn.Query(q.ClientGetLastBeforeRowsByCreatedAt, before, last)
+	}
 	if err != nil {
 		return
 	}
-
 	defer database.MustClose(rows)
 
 	for rows.Next() {

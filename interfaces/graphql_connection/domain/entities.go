@@ -14,9 +14,9 @@ type ArgumentsValue struct {
 }
 
 func (args ArgumentsValue) IsForward() (forward bool, err error) {
-	if args.First != 0 && args.After != "" {
+	if args.First != 0 {
 		forward = true
-	} else if args.Last != 0 && args.Before != "" {
+	} else if args.Last != 0 {
 		forward = false
 	} else {
 		err = IncorrectConnectionArgsError

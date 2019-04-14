@@ -94,14 +94,14 @@ func (r ProjectRepository) GetByClient(clientID domain.ID) (projects []domain.Pr
 }
 
 func (r ProjectRepository) GetLastByClient(cID domain.ID) (p domain.ProjectEntity, err error) {
-	err = r.DB.Conn.QueryRow(q.ProjectFindLastRowByClientID, cID).
+	err = r.DB.Conn.QueryRow(q.ProjectFindLastRowForClientByCreatedAt, cID).
 		Scan(&p.ID, &p.ClientID, &p.Timestamp, &p.Title, &p.Description)
 
 	switch err {
 	case sql.ErrNoRows:
 		err = domain.NotFoundProjectRepositoryError
 	default:
-		err = errors.WithMessagef(err, "when: ProjectFindLastRowByClientID | table: %s", q.ProjectTableName)
+		err = errors.WithMessagef(err, "when: ProjectFindLastRowForClientByCreatedAt | table: %s", q.ProjectTableName)
 	}
 
 	return
@@ -109,28 +109,31 @@ func (r ProjectRepository) GetLastByClient(cID domain.ID) (p domain.ProjectEntit
 
 func (r ProjectRepository) GetFirstByClient(cID domain.ID) (
 	p domain.ProjectEntity, err error) {
-	err = r.DB.Conn.QueryRow(q.ProjectFindFirstRowByClientID, cID).
+	err = r.DB.Conn.QueryRow(q.ProjectFindFirstRowForClientByCreatedAt, cID).
 		Scan(&p.ID, &p.ClientID, &p.Timestamp, &p.Title, &p.Description)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			err = domain.NotFoundProjectRepositoryError
 		} else {
-			err = errors.WithMessagef(err, "when: ProjectFindFirstRowByClientID | table: %s", q.ProjectTableName)
+			err = errors.WithMessagef(err, "when: ProjectFindFirstRowForClientByCreatedAt | table: %s", q.ProjectTableName)
 		}
 	}
 
 	return
 }
 
-func (r ProjectRepository) PaginateForwardByClientByTimestamp(cID domain.ID, first int, after time.Time) (
+func (r ProjectRepository) PaginateForwardByClientByTimestamp(clID domain.ID, first int, after time.Time) (
 	projects []domain.ProjectEntity, err error) {
 	var rows *sql.Rows
 
-	rows, err = r.DB.Conn.Query(q.ProjectFindRowsForForwardPage, cID, after, first)
+	if after.IsZero() {
+		rows, err = r.DB.Conn.Query(q.ProjectFindFirstRowsForClientByCreatedAt, clID, first)
+	} else {
+		rows, err = r.DB.Conn.Query(q.ProjectFindFirstAfterRowsForClientByCreatedAt, clID, after, first)
+	}
 	if err != nil {
 		return
 	}
-
 	defer database.MustClose(rows)
 
 	for rows.Next() {
@@ -148,15 +151,18 @@ func (r ProjectRepository) PaginateForwardByClientByTimestamp(cID domain.ID, fir
 	return
 }
 
-func (r ProjectRepository) PaginateBackwardByClientByTimestamp(clientID domain.ID, last int, before time.Time) (
+func (r ProjectRepository) PaginateBackwardByClientByTimestamp(clID domain.ID, last int, before time.Time) (
 	projects []domain.ProjectEntity, err error) {
 	var rows *sql.Rows
 
-	rows, err = r.DB.Conn.Query(q.ProjectFindRowsForBackwardPage, clientID, before, last)
+	if before.IsZero() {
+		rows, err = r.DB.Conn.Query(q.ProjectFindLastRowsForClientByCreatedAt, clID, last)
+	} else {
+		rows, err = r.DB.Conn.Query(q.ProjectFindLastBeforeRowsForClientByCreatedAt, clID, before, last)
+	}
 	if err != nil {
 		return
 	}
-
 	defer database.MustClose(rows)
 
 	for rows.Next() {

@@ -1,6 +1,8 @@
 package services
 
 import (
+	"time"
+
 	"github.com/devishot/so-go-grpc-client_project/domain"
 	conn "github.com/devishot/so-go-grpc-client_project/interfaces/graphql_connection/domain"
 	"github.com/devishot/so-go-grpc-client_project/interfaces/graphql_connection/repository"
@@ -32,7 +34,12 @@ func (s *ClientForwardConnectionService) GetPage() (val conn.PageValue, err erro
 }
 
 func (s *ClientForwardConnectionService) fetchPage() (err error) {
-	s.clients, err = s.ConnRepo.PaginateForwardByTimestamp(s.Page.First, conn.DecodeTimestampCursor(s.Page.After))
+	timestamp := time.Time{}
+	if s.Page.After != "" {
+		timestamp = conn.DecodeTimestampCursor(s.Page.After)
+	}
+
+	s.clients, err = s.ConnRepo.PaginateForwardByTimestamp(s.Page.First, timestamp)
 	if err != nil {
 		return
 	}

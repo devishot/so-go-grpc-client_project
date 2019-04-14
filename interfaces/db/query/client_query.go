@@ -59,7 +59,16 @@ ORDER BY created_at DESC
 LIMIT 1
 `
 
-const ClientGetForwardPageByCreatedAt = `
+const ClientGetFirstRowsByCreatedAt = `
+SELECT
+	id, created_at, first_name, last_name, company_name
+FROM
+	cp_client
+ORDER BY created_at ASC
+LIMIT $1
+`
+
+const ClientGetFirstAfterRowsByCreatedAt = `
 SELECT
 	id, created_at, first_name, last_name, company_name
 FROM
@@ -70,7 +79,16 @@ ORDER BY created_at ASC
 LIMIT $2
 `
 
-const ClientGetBackwardPageByCreatedAt = `
+const ClientGetLastRowsByCreatedAt = `
+SELECT
+	id, created_at, first_name, last_name, company_name
+FROM
+	cp_client
+ORDER BY created_at DESC
+LIMIT $1
+`
+
+const ClientGetLastBeforeRowsByCreatedAt = `
 SELECT
 	id, created_at, first_name, last_name, company_name
 FROM

@@ -11,9 +11,7 @@ type Builder struct {
 }
 
 func (b Builder) GetClientConnectionService(page conn.ArgumentsValue) ConnectionService {
-	ok, _ := page.IsForward()
-
-	if ok {
+	if ok, _ := page.IsForward(); ok {
 		return &ClientForwardConnectionService{
 			ConnRepo: b.ClientConnRepo,
 			Page:     page,
@@ -25,9 +23,7 @@ func (b Builder) GetClientConnectionService(page conn.ArgumentsValue) Connection
 }
 
 func (b Builder) GetProjectConnectionService(page conn.ArgumentsValue) ConnectionService {
-	ok, _ := page.IsForward()
-
-	if ok {
+	if ok, _ := page.IsForward(); ok {
 		return &ProjectForwardConnectionService{
 			ConnRepo: b.ProjectConnRepo,
 			Page:     page,

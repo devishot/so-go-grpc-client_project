@@ -50,8 +50,12 @@ func (s ClientService) GetClient(ctx context.Context, req *pb.GetClientRequest) 
 func (s ClientService) GetClientConnection(ctx context.Context, req *pb.GetClientConnectionRequest) (*pb.ClientConnectionResponse, error) {
 	log.Printf("getClientConnection: request=%v", req)
 
-	connService := s.ConnBuilder.GetClientConnectionService(decodeConnRequest(req.Args))
+	connReq := decodeConnRequest(req.Args)
+	if _, err := connReq.IsForward(); err != nil {
+		return nil, err
+	}
 
+	connService := s.ConnBuilder.GetClientConnectionService(connReq)
 	page, err := connService.GetPage()
 	if err != nil {
 		return nil, err
